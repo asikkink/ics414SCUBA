@@ -39,10 +39,10 @@ import java.util.Properties;
 public class DBDemo {
 
 	/** The name of the MySQL account to use (or empty for anonymous) */
-	private final String userName = "root";
+	private final String userName = "bigoli";
 
 	/** The password for the MySQL account (or empty for anonymous) */
-	private final String password = "password";
+	private final String password = "pasta";
 
 	/** The name of the computer running MySQL */
 	private final String serverName = "localhost";
