@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 
 /**
@@ -100,6 +97,65 @@ public class DBDemo {
 			}
 		}
 	}
+	//Select test
+	public static void selectRecord(Connection conn, String sql) 
+			throws SQLException{
+		Statement stmt = null;
+		try{
+			stmt = conn.createStatement();
+			System.out.println(sql);
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			//Extract data
+			
+			while(rs.next()){
+				int id = rs.getInt("ID");
+				String street = rs.getString("STREET");
+				
+				
+				//Display/do stuff
+				System.out.println(id +" "+street);
+			}
+			
+		}finally{
+			if(stmt !=null){
+				stmt.close();
+			}
+		}
+	}
+	
+	/**
+	 * Prepared statement test
+	 */
+	public static void preparedSelect(Connection conn, String street)//show columns with value
+			throws SQLException{
+		System.out.println("Execute preparedSelect");
+		PreparedStatement prestmt = null;
+		try{
+			prestmt = conn.prepareStatement("select * from test_table where street=?");
+			prestmt.setString(1, street);
+			
+			
+			System.out.println(street);
+			ResultSet rs = prestmt.executeQuery();
+			
+			//Extract data
+			
+			while(rs.next()){
+				int id = rs.getInt("ID");
+				String road = rs.getString("STREET");
+				
+				
+				//Display/do stuff
+				System.out.println(id +" "+road);
+			}
+			
+		}finally{
+			if(prestmt !=null){
+				prestmt.close();
+			}
+		}
+	}
 
 	/**
 	 * Connect to MySQL and do some stuff.
@@ -148,12 +204,24 @@ public class DBDemo {
 		// Select from table
 		try {
 			String sql = "SELECT * FROM " + this.tableName;
-			this.executeUpdate(conn, sql);
+			this.selectRecord(conn, sql);
 
 		} catch (SQLException e) {
 			System.out.println("can't select");
 			e.printStackTrace();
 		}
+		
+		//Select from table using prepared statement
+		try{
+			String street = "University";
+			
+			preparedSelect(conn,street);
+		}catch(SQLException e){
+			System.out.println("PreparedStatemnet error: ");
+			e.printStackTrace();
+			
+		}
+		
 
 		// Drop the table
 		try {
