@@ -51,7 +51,7 @@ public class DiveDB {
 	/**
 	 * Get pressure group by depth and time
 	 */
-	public static String getPressureGroup(int depth, int time) {
+	public String getPressureGroup(int depth, int time) {
 		String pGroup = "";
 		// select the first number that is both greater or equal to depth and
 		// time
@@ -69,6 +69,7 @@ public class DiveDB {
 				System.out.println(rs.getRow() + " " + rs.getInt("depth") + " "
 						+ rs.getInt("time"));
 				pGroup = rs.getString("pressureG");
+				return pGroup;
 			}
 
 		} catch (SQLException e) {
@@ -126,5 +127,47 @@ public class DiveDB {
 		}
 		return row;
 	}
+	/**
+	 * Gets the new pressure group during the surface interval
+	 * Takes in initial pressure group and time spent out of water
+	 */
+	public String getFinalPressureGroup(String initial_pressure_group, int surface_time){
+		String final_pressure_group = "";
+		// select the first number that is both greater or equal to depth and
+		// time
+		PreparedStatement prestmt = null;
+
+		try {
+			prestmt = conn
+					.prepareStatement("select * from surface_interval where init_pressure_group=? and start_time<=? and end_time>=?");
+			prestmt.setString(1, initial_pressure_group);
+			prestmt.setInt(2, surface_time);
+			prestmt.setInt(3, surface_time);
+
+			ResultSet rs = prestmt.executeQuery();
+			if (rs.next()) {
+
+				System.out.println(rs.getRow() + " " + rs.getInt("start_time") + " "
+						+ rs.getInt("end_time"));
+				final_pressure_group = rs.getString("final_pressure_group");
+				return final_pressure_group;
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (prestmt != null) {
+				try {
+					prestmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return "none";
+	}
+	
 
 }
