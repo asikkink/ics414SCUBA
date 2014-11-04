@@ -15,16 +15,26 @@ public class GuiApp1 {
 	}
 
 	public GuiApp1() {
+		//This block is a thing
 		JFrame guiFrame = new JFrame();
 		guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		guiFrame.setTitle("Example GUI");
 		guiFrame.setSize(300, 250);
 		guiFrame.setLocationRelativeTo(null);
+		
+		//Grab options from db somehow
+		/**
+		 * Option values
+		 */
 		String[] fruitOptions = { "Apple", "Apricot", "Banana", "Cherry",
-				"Date", "Kiwi", "Orange", "Pear", "Strawberry" };
+				"Date", "Kiwi", "Orange", "Pear", "Strawberry","Watermelon" };
 		String[] vegOptions = { "Asparagus", "Beans", "Broccoli", "Cabbage",
 				"Carrot", "Celery", "Cucumber", "Leek", "Mushroom", "Pepper",
 				"Radish", "Shallot", "Spinach", "Swede", "Turnip" };
+		
+		/**
+		 * Create a combobox for depth and time and i guess surface interval
+		 */
 		final JPanel comboPanel = new JPanel();
 		JLabel comboLbl = new JLabel("Fruits:");
 		JComboBox fruits = new JComboBox(fruitOptions);
