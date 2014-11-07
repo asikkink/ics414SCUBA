@@ -1,4 +1,7 @@
 //test file
+/**DISCLAIMER: THIS IS A PROTOTYPE. CANNOT BE USED TO PLAN ACTUAL DIVES
+ * 
+ */
 /**
  * Database Information
  * 
