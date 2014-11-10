@@ -2,28 +2,28 @@
 <html>
 <head>
 <title>Prototype Dive Interface</title>
-<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/plannerstyle.css">
+<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
 
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
-
-<!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery.js"></script>
 </head>
 <body>
-<div class="container">
-<h1> THIS CANNOT BE USED TO PLAN REAL DIVES!!!</h1>
+<div id="container" class="container">
+	<div class="row">
+		<div class="col-md-9" style="text-align:right">Key: <div class="square-color" style="background-color: orange"></div> Total Bottom Time <div class="square-color" style="background-color: lime"></div> Residual Nitrogen Time <div class="square-color" style="background-color: red"></div> Pressure Group (<strong>A-Z</strong>)</div>
+		<div class="col-md-3" style="text-align:right">Dive Table: PADI</div>
+	</div>
 	<div class="row">
 		<div class="col-md-12">
 		<canvas id="dive_graph" style="border:5px solid #000000;"></canvas>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-4"><strong>Planned Dives</strong>
+	<div id="inputs" class="row">
+		<div class="col-md-4"><h3>Planned Dives</h3>
 			<div id="dives">
-			<strong>Dive 1:</strong> 40ft for 10 minutes
+				<strong>Dive 1:</strong> 40ft for 10 minutes
 			</div>
 			<form class="form-horizontal" role="form">
 				<div class="form-group">
@@ -38,16 +38,10 @@
 						</select>
 					</div>
 				</div>
-				<button type="submit" class="btn btn-default btn-sm"> Edit Dive</button>
+				<button type="submit" class="btn btn-info btn-sm"> Edit Dive</button>
 			</form>
-		
-		
-		
-		
-		
-		
 		</div>
-		<div class="col-md-4"><strong>Dive Planner</strong>
+		<div class="col-md-4"><h3>Dive Planner</h3>
 			<form class="form-horizontal" role="form">
 			<div class="form-group">
 				<label class="col-sm-8 control-label"> Max Depth (ft):</label> 
@@ -86,7 +80,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label"> Safety Stop at:</label>
+				<label class="col-sm-4 control-label" style="padding-right:0px">Safety Stop at:</label>
 				<div class="col-sm-4">
 					<select class="form-control">
 						<option>None</option>
@@ -96,7 +90,7 @@
 						<option>50</option>
 					</select>
 				</div>
-				<label class="col-sm-2 control-label"> for:</label>
+				<label class="col-sm-1 control-label" style="padding-left:0px">for:</label>
 				<div class="col-sm-3">
 					<select class="form-control">
 						<option>5</option>
@@ -107,39 +101,43 @@
 					</select>
 				</div>
 			</div>
-			<button type="button" class="btn btn-default btn-sm"> Add Another Stop</button>
-			<button type="submit" class="btn btn-info btn-lg"> Add Dive</button>
+			<button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-plus"></span> Add Another Stop</button><br>
+			<button type="submit" class="btn btn-default btn-md" style="float:right">Add Dive</button>
 			</form>
 		</div>	
-		<div class="col-md-4"><strong>Dive Profile Details</strong>
+		<div class="col-md-4"><h3>Dive Profile Details</h3>
 		<form class="form-horizontal" role="form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Dive #:</label>
-				<div class="col-sm-10">
+				<label class="col-sm-3 control-label">Dive #:</label>
+				<div class="col-sm-9">
 					<input type="text" class="form-control" placeholder="01">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Date:</label>
-				<div class="col-sm-10">
+				<label class="col-sm-3 control-label">Date:</label>
+				<div class="col-sm-9">
 					<input type="text" class="form-control" placeholder="11-6-14">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Dive Buddies:</label>
-				<div class="col-sm-10">
+				<label class="col-sm-3 control-label">Dive Buddies:</label>
+				<div class="col-sm-9">
 					<input type="text" class="form-control" placeholder="Victor, Eva...">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Location:</label>
-				<div class="col-sm-10">
+				<label class="col-sm-3 control-label">Location:</label>
+				<div class="col-sm-9">
 					<input type="text" class="form-control" placeholder="Beach">
 				</div>
 			</div>
-			<button type="submit" class="btn btn-default btn-lg"> Finish</button>
+			<button type="submit" class="btn btn-default btn-lg" style="float:right">Finish</button>
 		</form>
+		</div>
 	</div>
+</div>
+<div id="disclaimer">
+	<span class="glyphicon glyphicon-warning-sign"></span> WARNING: This is a prototype and CANNOT be used to plan real dives.
 </div>
 </body>
 </html> 

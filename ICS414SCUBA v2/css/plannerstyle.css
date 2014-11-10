@@ -1,0 +1,45 @@
+body {
+	font-family: 'Roboto Condensed', sans-serif;
+	margin: 30px 0;
+	color: #545454;
+}
+
+#container {
+	background-color: #ededed;
+	font-size: 1.25em;
+	padding: 20px;
+}
+
+#disclaimer {
+	text-align: center;
+	color: #c6c6c6;
+	font-size: 12px;
+	margin-top:10px;
+}
+
+#dives {
+	max-height: 10em;
+	overflow: auto;
+	margin-bottom: 15px;
+}
+
+#print {
+	text-decoration: none;
+	color: #c6c6c6;
+}
+
+#print:hover {
+	text-decoration: none;
+	color: #a0a0a0;
+}
+
+.square-color {
+	width: 15px;
+	height: 15px;
+	display: inline-block;
+	margin: 0 2px;
+}
+
+label {
+	text-align: left !important;
+}
