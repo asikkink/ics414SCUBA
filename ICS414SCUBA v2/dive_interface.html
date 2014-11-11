@@ -4,15 +4,19 @@
 <title>Prototype Dive Interface</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="css/plannerstyle.css">
+<link rel="stylesheet" href="css/jquery-ui.min.css">
 <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
-
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script>
+$('.date-picker').datepicker();
+</script>
 </head>
 <body>
 <div id="container" class="container">
 	<div class="row">
-		<div class="col-md-9" style="text-align:right">Key: <div class="square-color" style="background-color: orange"></div> Total Bottom Time <div class="square-color" style="background-color: lime"></div> Residual Nitrogen Time <div class="square-color" style="background-color: red"></div> Pressure Group (<strong>A-Z</strong>)</div>
+		<div class="col-md-9" style="text-align:right; margin-bottom:10px">Key: <div class="square-color" style="background-color: orange"></div> Total Bottom Time <div class="square-color" style="background-color: lime"></div> Residual Nitrogen Time <div class="gradient-color"></div> Pressure Group (<strong>A-Z</strong>)</div>
 		<div class="col-md-3" style="text-align:right">Dive Table: PADI</div>
 	</div>
 	<div class="row">
@@ -29,7 +33,7 @@
 				<div class="form-group">
 					<label class="col-sm-8 control-label"> Edit in Dive Planner:</label> 
 					<div class="col-sm-4">
-						<select class="form-control">
+						<select class="form-control" disabled>
 							<option>1</option>
 							<option>2</option>
 							<option>3</option>
@@ -38,7 +42,7 @@
 						</select>
 					</div>
 				</div>
-				<button type="submit" class="btn btn-info btn-sm"> Edit Dive</button>
+				<button type="submit" class="btn btn-info btn-sm disabled"> Edit Dive</button>
 			</form>
 		</div>
 		<div class="col-md-4"><h3>Dive Planner</h3>
@@ -101,7 +105,8 @@
 					</select>
 				</div>
 			</div>
-			<button type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-plus"></span> Add Another Stop</button><br>
+			<div style="text-align:right; font-size: 14px"><input type="checkbox" name="defSS" value=""> Use default safety stop</div>
+			<button type="button" class="btn btn-info btn-sm disabled"><span class="glyphicon glyphicon-plus"></span> Add Another Stop</button><br>
 			<button type="submit" class="btn btn-default btn-md" style="float:right">Add Dive</button>
 			</form>
 		</div>	
@@ -116,7 +121,10 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Date:</label>
 				<div class="col-sm-9">
-					<input type="text" class="form-control" placeholder="11-6-14">
+					<div class="input-group">
+						<input type="text" id="date-picker" class="date-picker form-control" placeholder="11-6-14">
+						<label for="date-picker" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
+					</div>
 				</div>
 			</div>
 			<div class="form-group">
