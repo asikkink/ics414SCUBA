@@ -6,6 +6,8 @@
 <link rel="stylesheet" type="text/css" href="css/plannerstyle.css">
 <link rel="stylesheet" href="css/jquery-ui.min.css">
 <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax.js"></script>
 
 </head>
 <body>
@@ -45,10 +47,10 @@
 			<div class="form-group">
 				<label class="col-sm-8 control-label"> Max Depth (ft):</label> 
 				<div class="col-sm-4">
-					<select class="form-control">
-						<option>35</option>
-						<option>40</option>
-						<option>50</option>
+					<select id="depth_select" class="form-control">
+						<option value="35">35</option>
+						<option value="40">40</option>
+						<option value="50">50</option>
 						<option>60</option>
 						<option>70</option>
 					</select>
@@ -57,7 +59,7 @@
 			<div class="form-group">
 				<label class="col-sm-8 control-label"> Bottom Time (minutes):</label> 
 				<div class="col-sm-4">
-					<select class="form-control">
+					<select id="bottom_time_select" class="form-control">
 						<option>10</option>
 						<option>20</option>
 						<option>30</option>
@@ -69,7 +71,7 @@
 			<div class="form-group">
 				<label class="col-sm-8 control-label"> Surface Interval (minutes):</label> 
 				<div class="col-sm-4">
-					<select class="form-control">
+					<select id="surface_int_select" class="form-control">
 						<option>15</option>
 						<option>20</option>
 						<option>30</option>
