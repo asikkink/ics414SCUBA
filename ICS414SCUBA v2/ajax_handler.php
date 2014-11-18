@@ -7,7 +7,7 @@ if ($db->connect_errno) echo'Could not open database connection.';
 if(isset($_POST['init'])){
 
 //set sql statement
-$sql = "SELECT DISTINCT `depth` from `bottom_time` ORDER BY `depth` ASC";
+$sql = "SELECT DISTINCT 'depth' from 'bottom_time' ORDER BY 'depth' ASC";
 
 //see if there is a result when we run the query
 if(!$result = mysqli_query($db, $sql)){
@@ -32,7 +32,7 @@ else echo "No rows returned by database.";
 else if(isset($_POST['depth'])){
 
 //set sql statement
-$sql = "SELECT `time` from `bottom_time` WHERE `depth` = '{$_POST['depth']}' ORDER BY `time` ASC";
+$sql = "SELECT 'time' from 'bottom_time' WHERE 'depth' = '{$_POST['depth']}' ORDER BY 'time' ASC";
 
 //see if there is a result when we run the query
 if(!$result = mysqli_query($db, $sql)){
@@ -57,7 +57,7 @@ else echo "No rows returned by database.";
 else if(isset($_POST['bottom_time'])){
 
 //set sql statement
-$sql = "SELECT `end_time` from `surface_interval` WHERE `init_pressure_group` IN ( SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '{$_POST['depth_selected']}' AND `time` = '{$_POST['bottom_time']}') ORDER BY `end_time` ASC";
+$sql = "SELECT 'end_time' from 'surface_interval' WHERE 'init_pressure_group' IN ( SELECT 'pressure_group' FROM 'bottom_time' WHERE 'depth' = '{$_POST['depth_selected']}' AND 'time' = '{$_POST['bottom_time']}') ORDER BY 'end_time' ASC";
 
 //see if there is a result when we run the query
 if(!$result = mysqli_query($db, $sql)){
