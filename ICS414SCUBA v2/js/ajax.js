@@ -59,7 +59,7 @@ $(document).ready(
 	//ajax function for AddDive selection to update graph and final calculations
 	$('#addDiveForm').on('submit',
 		function (e) {
-    e.preventDefault();
+		e.preventDefault();
 		var formValues = $('#addDiveForm').serialize() + "&action='addingDive'";
 		//alert(formValues);
 		$.ajax({
