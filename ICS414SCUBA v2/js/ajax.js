@@ -59,16 +59,13 @@ $(document).ready(
 	//ajax function for AddDive selection to update graph and final calculations
 	$('#addDiveForm').on('submit',
 		function (e) {
-		e.preventDefault();
-		var formValues = $('#addDiveForm').serialize() + "&action='addingDive'";
-		//alert(formValues);
+    e.preventDefault();
+		var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
+		alert(formValues);
 		$.ajax({
 			type : "POST",
 			url : "ajax_handler.php",
-			data : {
-				action : 'addingDive',
-				depth : 'true'
-			},
+			data : formValues,
 			success : function (data) {
 		//		$('#surface_int_select').html(result);
 				//console.log("hello");

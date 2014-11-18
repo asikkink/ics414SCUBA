@@ -22,7 +22,7 @@ $sql = "SELECT DISTINCT `depth` from `bottom_time` ORDER BY `depth` ASC";
 //see if there is a result when we run the query
 if(!$result = mysqli_query($db, $sql)){
 //if no result, there was an error
-echo "MySQL error:".mysqli_error($db);
+echo "MySQL error:".mysqli_error();
 }
 //if there is no mysql error, see if any rows were returned from the query
 else if(mysqli_num_rows($result)){
@@ -82,11 +82,29 @@ echo $response;
 }
 //When submit button is pressed, manage current input
 function addDive($db){
-if(isset($_POST['depth'])){
-$message = "wrong answer";
-echo "<script type='text/javascript'>console.log(".$message.");</script>";
+	if(isset($_POST['surface_int_select'])){
+		//$message = "wrong answer";
+		//echo "YAY AJAX!!!";
+		$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `end_time` = '{$_POST['surface_int_select']}'";
+		//see if there is a result when we run the query
+		if(!$result = mysqli_query($db, $sql)){
+			//if no result, there was an error
+			echo "MySQL error:".mysqli_error($db);
+			}
+			//if there is no mysql error, see if any rows were returned from the query
+		else if(mysqli_num_rows($result)){
+			$response = "";
+			for($i=0;$i<mysqli_num_rows($result);$i++){
+				$data = mysqli_fetch_assoc($result);
+				$response = $data;
+			}
+		echo $response['final_pressure_group'];
+	}
 }
+else echo "no surface int!!";
+
 }
+
 /*
 //set the initial values for the max depth field
 if(isset($_POST['init']) && !isset($_POST['addingDive'])){
