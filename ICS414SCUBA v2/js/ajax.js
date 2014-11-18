@@ -9,7 +9,7 @@ $(document).ready(
 			init : 'true'
 		},
 		success : function (result) {
-			console.log(result);
+			//console.log(result);
 			$('#depth_select').html(result);
 		}
 	});
@@ -27,7 +27,7 @@ $(document).ready(
 				depth : value
 			},
 			success : function (result) {
-				console.log(result);
+				//console.log(result);
 				$('#bottom_time_select').html(result);
 
 			}
@@ -49,7 +49,7 @@ $(document).ready(
 				depth_selected : depth
 			},
 			success : function (result) {
-				console.log(result);
+				//console.log(result);
 				$('#surface_int_select').html(result);
 
 			}
@@ -71,11 +71,11 @@ $(document).ready(
 			},
 			success : function (data) {
 		//		$('#surface_int_select').html(result);
-				console.log("hello");
+				//console.log("hello");
 				alert(data);
 			},
 			error : function () {
-				console.log("failed");
+				//console.log("failed");
 			}
 		});
 

@@ -22,7 +22,7 @@ $sql = "SELECT DISTINCT `depth` from `bottom_time` ORDER BY `depth` ASC";
 //see if there is a result when we run the query
 if(!$result = mysqli_query($db, $sql)){
 //if no result, there was an error
-echo "MySQL error:".mysqli_error();
+echo "MySQL error:".mysqli_error($db);
 }
 //if there is no mysql error, see if any rows were returned from the query
 else if(mysqli_num_rows($result)){
