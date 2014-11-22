@@ -61,7 +61,7 @@ $(document).ready(
 		function (e) {
     e.preventDefault();
 		var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
-		alert(formValues);
+		//alert(formValues);
 		$.ajax({
 			type : "POST",
 			url : "ajax_handler.php",
