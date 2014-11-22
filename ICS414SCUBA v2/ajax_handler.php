@@ -83,10 +83,10 @@ function selectBottomTime($db){
 //When submit button is pressed, manage current input
 function addDive($db, $POST){
 	$profileID = 1;
-	$diveNum = 1;
+	$diveNum = getDiveNum($db, $profileID) + 1;
 	echo getInitialPG($db, $profileID);
 	echo getPostDivePG($db, $POST['depth_select'], $POST['bottom_time_select']);
-	echo getPostSurfaceIntPG($db, $postDivePG, $POST['surface_int_select']);
+	//echo getPostSurfaceIntPG($db, $postDivePG, $POST['surface_int_select']);
 	
 	//get initial PG
 	$initialPG = getInitialPG($db, $profileID);
@@ -102,14 +102,30 @@ function addDive($db, $POST){
 	
 }
 
+function getDiveNum($db, $profileID){
+	$sql = "SELECT `dive_num` FROM `dives` WHERE `profile_id` = '$profileID'";
+	
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	//if empty table returned, there is no dive yet
+	if(mysqli_num_rows($result) == 0) $dive_num = 0; 
+	//else we have the dive nums
+	else {
+		//take last dive num from results
+		$ipg = mysqli_fetch_assoc($result);
+		$last_dive = end($ipg);
+		$dive_num = $last_dive;
+	}
+	return $dive_num;
+}
+
 function getInitialPG($db, $profileID){
 	//if no previous dives, initialize first one
-	$sql = "SELECT `dive_num`,`post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID'";
+	$sql = "SELECT `post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID'";
 	
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	//if empty table returned, there is no dive yet
 	if(mysqli_num_rows($result) == 0) $init_pressure_group = null; 
-	//else we have the dive nums
+	//else we have the post_surf_int_pg
 	else {
 		//take last dive num and grab post_surf_int_pg from results
 		$ipg = mysqli_fetch_assoc($result);
