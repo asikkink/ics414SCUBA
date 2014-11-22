@@ -8,7 +8,7 @@ if(isset($_POST['action'])){
 	case 'initialize': initialize($db);break;
 	case 'select_max_depth': selectDepth($db); break;
 	case 'select_bottom_time': selectBottomTime($db); break;
-	case 'addingDive': addDive($db); break;
+	case 'addingDive': addDive($db, $_POST); break;
 	default: echo "No POST data sent to server."; break;
 	}
 }else{
@@ -81,12 +81,71 @@ function selectBottomTime($db){
 	}else echo "No rows returned by database.";
 }
 //When submit button is pressed, manage current input
-function addDive($db){
+function addDive($db, $POST){
+	$profileID = 1;
+	$diveNum = 1;
+	echo getInitialPG($db, $profileID);
+	echo getPostDivePG($db, $POST['depth_select'], $POST['bottom_time_select']);
+	echo getPostSurfaceIntPG($db, $postDivePG, $POST['surface_int_select']);
 	
-	getFinalPressureGroup($db);
-	getFinalPressureGroup($db);
-	getPressureGroup($db);
+	//get initial PG
+	$initialPG = getInitialPG($db, $profileID);
+	$postDivePG = getPostDivePG($db, $POST['depth_select'], $POST['bottom_time_select']);
+	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $POST['surface_int_select']);
+	//insert to table
+	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '{$POST['depth_select']}', 
+	'{$POST['bottom_time_select']}', '$postDivePG', '{$POST['surface_int_select']}', '$postSurfacePG') ";
+	mysqli_query($db, $sql);
+	
+	
+	
+	
 }
+
+function getInitialPG($db, $profileID){
+	//if no previous dives, initialize first one
+	$sql = "SELECT `dive_num`,`post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID'";
+	
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	//if empty table returned, there is no dive yet
+	if(mysqli_num_rows($result) == 0) $init_pressure_group = null; 
+	//else we have the dive nums
+	else {
+		//take last dive num and grab post_surf_int_pg from results
+		$ipg = mysqli_fetch_assoc($result);
+		$last_dive = end($ipg);
+		$init_pressure_group = $last_dive;
+	}
+	
+	return $init_pressure_group;	
+	
+}
+
+function getPostDivePG($db, $depth, $time){
+
+	$sql = "SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '$depth' AND `time` = '$time'";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else {
+		$pdpg = mysqli_fetch_assoc($result);
+		return $pdpg['pressure_group'];
+	}
+	
+}
+
+
+function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
+	
+	$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `init_pressure_group` = '$postDivePG' AND `end_time` = '$surfInt'";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else {
+		$psipg = mysqli_fetch_assoc($result);
+		return $psipg['final_pressure_group'];
+	}
+	
+}
+
 
 
 function getFinalPressureGroup($db){
@@ -107,7 +166,7 @@ function getFinalPressureGroup($db){
 		//see if there is a result when we run the query
 		if(!$result = mysqli_query($db, $sql)){
 			//if no result, there was an error
-			echo "MySQL error:".mysqli_error($db);
+			return "MySQL error:".mysqli_error($db);
 		}
 		//if there is no mysql error, see if any rows were returned from the query
 		else if(mysqli_num_rows($result)){
@@ -116,10 +175,10 @@ function getFinalPressureGroup($db){
 				$data = mysqli_fetch_assoc($result);
 				$response = $data;
 			}
-			echo $response['final_pressure_group'];
+			return $response['final_pressure_group'];
 		}
 	}
-	else echo "no surface int!!";
+	else return "no surface int!!";
 
 }
 
@@ -141,17 +200,17 @@ function getPressureGroup($db){
 		
 		*/
 		if(!$result = mysqli_query($db, $sql)){
-			echo "MySQL error:".mysqli_error($db);
+			return "MySQL error:".mysqli_error($db);
 		}
 		else if(mysqli_num_rows($result)){
 			$response = "";
 			$data = mysqli_fetch_assoc($result);
 			$response = $data;
-			echo $response['pressure_group'];
+			return $response['pressure_group'];
 		}
 		
 	}
-	else echo "no depth selected!!";
+	else return "no depth selected!!";
 }
 
 
