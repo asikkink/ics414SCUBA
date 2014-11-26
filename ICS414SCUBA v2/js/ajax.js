@@ -1,5 +1,9 @@
 $(document).ready(
 	function () {
+	
+	//debug mode!
+	var debug = true;
+	
 	//ajax called at dom initialization to update depth field with options
 	$.ajax({
 		type : 'POST',
@@ -58,23 +62,45 @@ $(document).ready(
 	})
 	//ajax function for AddDive selection to update graph and final calculations
 	$('#addDiveForm').on('submit',
-		function (e) {
+		function (e, debug) {
     e.preventDefault();
-		var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
-		//alert(formValues);
-		$.ajax({
-			type : "POST",
-			url : "ajax_handler.php",
-			data : formValues,
-			success : function (data) {
-		//		$('#surface_int_select').html(result);
-				//console.log("hello");
-				alert(data);
-			},
-			error : function () {
-				//console.log("failed");
-			}
-		});
+		if(debug == true){
+			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
+			//alert(formValues);
+			$.ajax({
+				type : "POST",
+				url : "testCases.php",
+				data : formValues,
+				success : function (data) {
+			//		$('#surface_int_select').html(result);
+					//console.log("hello");
+					alert(data);
+				},
+				error : function () {
+					//console.log("failed");
+				}
+			});
+		
+		
+		}
+	else{
+	
+			var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
+			//alert(formValues);
+			$.ajax({
+				type : "POST",
+				url : "ajax_handler.php",
+				data : formValues,
+				success : function (data) {
+			//		$('#surface_int_select').html(result);
+					//console.log("hello");
+					alert(data);
+				},
+				error : function () {
+					//console.log("failed");
+				}
+			});
+		}
 
 	})
 
