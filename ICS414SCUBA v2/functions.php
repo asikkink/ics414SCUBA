@@ -86,7 +86,7 @@ function addDive($db, $POST){
 	'{$POST['bottom_time_select']}', '$postDivePG', '{$POST['surface_int_select']}', '$postSurfacePG') ";
 	mysqli_query($db, $sql);
 	
-	
+	echo "id: $profileID, diveNum: $diveNum, depth:{$POST['depth_select']}, time: {$POST['bottom_time_select']}, surfInt:{$POST['surface_int_select']}";
 	
 	
 }
