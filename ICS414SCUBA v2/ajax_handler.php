@@ -1,4 +1,7 @@
 <?php
+//require functions file
+require 'functions.php';
+
 //initialize the database connection
 $db = mysqli_connect('localhost', 'bigoli', 'pasta', 'dive_table');
 if ($db->connect_errno) echo'Could not open database connection.';
