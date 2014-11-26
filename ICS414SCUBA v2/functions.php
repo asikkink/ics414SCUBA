@@ -72,10 +72,6 @@ function selectBottomTime($db, $POST){
 function addDive($db, $POST){
 	$profileID = 1;
 	$diveNum = getDiveNum($db, $profileID);
-	echo $diveNum;
-	echo getInitialPG($db, $profileID, $diveNum-1);
-	echo getPostDivePG($db, $POST['depth_select'], $POST['bottom_time_select']);
-	//echo getPostSurfaceIntPG($db, $postDivePG, $POST['surface_int_select']);
 	
 	//get initial PG
 	$initialPG = getInitialPG($db, $profileID, $diveNum-1);
