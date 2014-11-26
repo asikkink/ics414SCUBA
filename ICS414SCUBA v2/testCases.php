@@ -28,7 +28,7 @@ function testFunctions($db, $POST){
 	//Add first dive of 60ft for 11 min and surfint of 47
 	
 	dbsAddDive($db, $POST, 60,11,47);// look at console for values
-	dbsAddDive($db, $POST, 70,15,30);
+	dbsAddDive($db, $POST, 70,15,38);
 	
 }
 
