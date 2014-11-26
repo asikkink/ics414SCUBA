@@ -26,16 +26,18 @@ else{
 function testFunctions($db, $POST){
 //Case 1: Adding 3 Dives
 	//Add first dive of 60ft for 11 min and surfint of 47
-	$depth = &$POST['depth_select'];
-	$bottomTime = &$POST['bottom_time_select'];
-	$surfaceInt = &$POST['surface_int_select'];
-	$depth = 60;
-	$bottomTime = 11;
-	$surfaceInt = 47;
 	
-	addDive($db, $POST);
+	dbsAddDive($db, $POST, 60,11,47);// look at console for values
 	
 	
+}
+
+function dbsAddDive($db, $POST, $depth, $bottomTime, $surfaceInt){
+	$POST['depth_select'] = $depth;
+	$POST['bottom_time_select'] = $bottomTime;
+	$POST['surface_int_select'] = $surfaceInt;
+	addDive($db,$POST); 
+
 }
 
 ?>
