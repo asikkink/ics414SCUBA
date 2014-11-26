@@ -1,9 +1,6 @@
 $(document).ready(
 	function () {
 	
-	//debug mode!
-	var debug = true;
-	
 	//ajax called at dom initialization to update depth field with options
 	$.ajax({
 		type : 'POST',
@@ -62,8 +59,10 @@ $(document).ready(
 	})
 	//ajax function for AddDive selection to update graph and final calculations
 	$('#addDiveForm').on('submit',
-		function (e, debug) {
+		function (e) {
     e.preventDefault();
+		//debug mode!
+	var debug = true;
 		if(debug == true){
 			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
 			//alert(formValues);
@@ -74,7 +73,7 @@ $(document).ready(
 				success : function (data) {
 			//		$('#surface_int_select').html(result);
 					//console.log("hello");
-					alert(data);
+					console.log(data);
 				},
 				error : function () {
 					//console.log("failed");
