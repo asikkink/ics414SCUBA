@@ -28,7 +28,7 @@ function initialize($db,$POST){
 function selectDepth($db, $POST){
 	if(isset($POST['depth'])){
 		//set sql statement
-		$sql = "SELECT `time` from `bottom_time` WHERE `depth` = '{$_POST['depth']}' ORDER BY `time` ASC";
+		$sql = "SELECT `time` from `bottom_time` WHERE `depth` = '{$POST['depth']}' ORDER BY `time` ASC";
 		//see if there is a result when we run the query
 		if(!$result = mysqli_query($db, $sql)){
 			//if no result, there was an error
@@ -50,7 +50,7 @@ function selectDepth($db, $POST){
 function selectBottomTime($db, $POST){
 	if(isset($_POST['bottom_time'])){
 		//set sql statement
-		$sql = "SELECT `end_time` from `surface_interval` WHERE `init_pressure_group` IN ( SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '{$_POST['depth_selected']}' AND `time` = '{$_POST['bottom_time']}') ORDER BY `end_time` ASC";
+		$sql = "SELECT `end_time` from `surface_interval` WHERE `init_pressure_group` IN ( SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '{$POST['depth_selected']}' AND `time` = '{$POST['bottom_time']}') ORDER BY `end_time` ASC";
 		//see if there is a result when we run the query
 		if(!$result = mysqli_query($db, $sql)){
 			//if no result, there was an error
@@ -83,6 +83,7 @@ function addDive($db, $POST){
 	mysqli_query($db, $sql);
 	
 	echo "id: $profileID, diveNum: $diveNum, depth:{$POST['depth_select']}, time: {$POST['bottom_time_select']}, surfInt:{$POST['surface_int_select']}";
+	echo "\tInitialPG: $initialPG, PostDivePG: $postDivePG, PostSurfIntPG: $postSurfacePG";
 	
 	
 }
