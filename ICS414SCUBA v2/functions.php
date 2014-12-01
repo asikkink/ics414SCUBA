@@ -74,21 +74,37 @@ function selectBottomTime($db, $POST){
 }
 /**When submit button is pressed, manage add dive to dive table
 *  Test: echo's dive row back to client console
+*  Everything goes on here for testing
 */
 function addDive($db, $POST){
+	//references
 	$profileID = 1;
 	$diveNum = getDiveNum($db, $profileID);
+	$depth = $POST['depth_select'];
+	$time = $POST['bottom_time_select'];
+	$surfInt = $POST['surface_int_select'];
 	
 	//get current dive values
 	$initialPG = getInitialPG($db, $profileID, $diveNum-1);
-	$postDivePG = getPostDivePG($db, $POST['depth_select'], $POST['bottom_time_select']);
-	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $POST['surface_int_select']);
+	
+	/**Include Residual Time
+	*/
+	//=========================
+	$residualTime = getResidualTime($db, $initialPG, $depth);
+	$time = $residualTime + $time;
+	echo $residualTime;
+	//===========================
+	
+	$postDivePG = getPostDivePG($db, $depth, $time);
+	
+	
+	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
 	//insert values into table
-	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '{$POST['depth_select']}', 
-	'{$POST['bottom_time_select']}', '$postDivePG', '{$POST['surface_int_select']}', '$postSurfacePG') ";
+	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
+	'$time', '$postDivePG', '$surfInt', '$postSurfacePG') ";
 	mysqli_query($db, $sql);
 	
-	echo "id: $profileID, diveNum: $diveNum, depth:{$POST['depth_select']}, time: {$POST['bottom_time_select']}, surfInt:{$POST['surface_int_select']}";
+	echo "id: $profileID, diveNum: $diveNum, depth:$depth, time: $time, surfInt:$surfInt";
 	echo "\tInitialPG: $initialPG, PostDivePG: $postDivePG, PostSurfIntPG: $postSurfacePG\n";
 	
 	
@@ -136,21 +152,38 @@ function getInitialPG($db, $profileID, $prevDiveNum){
 */
 function getPostDivePG($db, $depth, $time){
 
-	$sql = "SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '$depth' AND `time` = '$time'";
+	$sql = "SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '$depth' AND `time` >= '$time'";
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
 		$pdpg = mysqli_fetch_assoc($result);
 		return $pdpg['pressure_group'];
 	}
-	
 }
+
+
+/**Get residual time. Pressure group -> Depth = Residual time
+*  Used: getPostDivePG will need to add residual time to $time to get total time.
+*/
+function getResidualTime($db, $initialPG, $depth){
+	if($initialPG == null) return 0;
+	$sql = "SELECT `residual_time` FROM `residual_time` WHERE `pressure_group` = '$initialPG' and `depth` = '$depth'";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else {
+		$residualRow = mysqli_fetch_assoc($result);
+		return $residualRow['residual_time'];
+	}
+}
+
+
 /**Get the post surface interval pressure group
 *
 */
 function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
-	$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `init_pressure_group` = '$postDivePG' AND `end_time` = '$surfInt'";
+	$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `init_pressure_group` = '$postDivePG' AND `end_time` >= '$surfInt'";
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {

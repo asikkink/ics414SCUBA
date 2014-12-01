@@ -31,7 +31,7 @@ function testFunctions($db, $POST){
 	dbsAddDive($db, $POST, 70,15,38);
 	dbsAddDive($db, $POST, 40,64,72);
 	echo "\n";
-	//Results of row (post_dive & post_surf pgroups): BB, EC, OD
+	//Results of row (post_dive & post_surf pgroups): BB, KE, TF
 	
 	truncateDives($db);
 	
@@ -51,9 +51,9 @@ function testFunctions($db, $POST){
 	*/
 	dbsAddDive($db, $POST, 60,11,47); 
 	/*
-	Residual time: 23 + 11 = 34
-	60 for 34 -> N
-	N -> 47 -> F
+	Residual time: 14 + 11 = 25
+	60 for 25 -> I
+	I -> 47 -> C
 	*/
 	//Results of row: BB, HC, NF
 	
