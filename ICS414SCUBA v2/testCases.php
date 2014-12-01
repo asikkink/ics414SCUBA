@@ -55,7 +55,7 @@ function testFunctions($db, $POST){
 	60 for 25 -> I
 	I -> 47 -> C
 	*/
-	//Results of row: BB, HC, NF
+	//Results of row: BB, HC, IC
 	
 	truncateDives($db);
 }
