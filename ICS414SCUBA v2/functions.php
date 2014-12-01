@@ -26,6 +26,9 @@ function initialize($db,$POST){
 }
 /**If a specific depth has been selected, retrieve the bottom times for that depth
 *  Field affected: Bottom Time(minutes)
+====================================================================================
+*  [Need Fix] Condition: Based on initial PG and depth, limit selection to be less than actual_bottom_time
+====================================================================================
 */
 function selectDepth($db, $POST){
 	if(isset($POST['depth'])){
@@ -146,9 +149,8 @@ function getInitialPG($db, $profileID, $prevDiveNum){
 	return $init_pressure_group;	
 }
 /**Get the post dive pressure group
-======================================================================
-*  Probably need to include residual time in one of these functions
-======================================================================
+*  The $time will be the Total time 
+*  
 */
 function getPostDivePG($db, $depth, $time){
 

@@ -62,7 +62,7 @@ $(document).ready(
 		function (e) {
     e.preventDefault();
 		//debug mode!
-	var debug = true;
+	var debug = false;
 		if(debug == true){
 			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
 			//alert(formValues);
@@ -93,7 +93,7 @@ $(document).ready(
 				success : function (data) {
 			//		$('#surface_int_select').html(result);
 					//console.log("hello");
-					alert(data);
+					console.log(data);
 				},
 				error : function () {
 					//console.log("failed");

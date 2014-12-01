@@ -1,4 +1,9 @@
 <?php
+/**
+To turn off Testing mode look in the ajax.js file.
+
+*/
+
 //require functions file
 require 'functions.php';
 
@@ -58,6 +63,10 @@ function testFunctions($db, $POST){
 	//Results of row: BB, HC, IC
 	
 	truncateDives($db);
+	
+/**Test whether or not we are preventing users from 
+* selecting past the max actual time so they don't die.
+*/
 }
 
 function dbsAddDive($db, $POST, $depth, $bottomTime, $surfaceInt){
