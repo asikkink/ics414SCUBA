@@ -30,13 +30,34 @@ function testFunctions($db, $POST){
 	dbsAddDive($db, $POST, 60,11,47);// look at console for values
 	dbsAddDive($db, $POST, 70,15,38);
 	dbsAddDive($db, $POST, 40,64,72);
+	echo "\n";
 	//Results of row (post_dive & post_surf pgroups): BB, EC, OD
 	
 	truncateDives($db);
 	
-//Case 2: Prevent user from exceeding actual bottom time. 
+//Case 2: Pressure group increases each dive due to residual time adding to bottom time
+	echo "Test case 2 \n";
+	dbsAddDive($db, $POST, 60,11,47); 
+	/**
+	Residual time: 0  + 11 = 11
+	60 for 11 -> B
+	B -> 47 -> B
+	*/
+	dbsAddDive($db, $POST, 60,11,47); 
+	/*
+	Residual time: 11 + 11 = 22
+	60 for 22 -> H
+	H -> 47 -> C
+	*/
+	dbsAddDive($db, $POST, 60,11,47); 
+	/*
+	Residual time: 23 + 11 = 34
+	60 for 34 -> N
+	N -> 47 -> F
+	*/
+	//Results of row: BB, HC, NF
 	
-
+	truncateDives($db);
 }
 
 function dbsAddDive($db, $POST, $depth, $bottomTime, $surfaceInt){
