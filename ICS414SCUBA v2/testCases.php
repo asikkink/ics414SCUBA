@@ -26,10 +26,17 @@ else{
 function testFunctions($db, $POST){
 //Case 1: Adding 3 Dives
 	//Add first dive of 60ft for 11 min and surfint of 47
-	
+	echo "Test case 1 \n";
 	dbsAddDive($db, $POST, 60,11,47);// look at console for values
 	dbsAddDive($db, $POST, 70,15,38);
+	dbsAddDive($db, $POST, 40,64,72);
+	//Results of row (post_dive & post_surf pgroups): BB, EC, OD
 	
+	truncateDives($db);
+	
+//Case 2: Prevent user from exceeding actual bottom time. 
+	
+
 }
 
 function dbsAddDive($db, $POST, $depth, $bottomTime, $surfaceInt){
@@ -38,6 +45,12 @@ function dbsAddDive($db, $POST, $depth, $bottomTime, $surfaceInt){
 	$POST['surface_int_select'] = $surfaceInt;
 	addDive($db,$POST); 
 
+}
+
+//Empties table "dives" for testing purposes
+function truncateDives($db){
+	$sql = "TRUNCATE TABLE dives";
+	mysqli_query($db, $sql);
 }
 
 ?>
