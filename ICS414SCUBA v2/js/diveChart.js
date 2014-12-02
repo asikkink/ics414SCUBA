@@ -23,6 +23,3 @@ isStacked: true
 
 	chart.draw(data, options);
 }
-
-//
-function drawChart()

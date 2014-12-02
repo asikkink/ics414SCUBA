@@ -1,6 +1,5 @@
 $(document).ready(
-	function () {
-	
+function () {
 	//ajax called at dom initialization to update depth field with options
 	$.ajax({
 		type : 'POST',
@@ -16,16 +15,10 @@ $(document).ready(
 	});
 
 
-	$('input[name=dives]').change(
-		function () {
-		alert("hello");
-		value = $('input:radio[name=dives]:checked').val();
-		alert(value);
-	});
-
+	
 	//ajax function for depth selection to update bottom time field options
 	$('#depth_select').change(
-		function () {
+	function () {
 		value = $('#depth_select').val();
 		//alert(value);
 		$.ajax({
@@ -45,7 +38,7 @@ $(document).ready(
 
 	//ajax function for bottom time selection to update surface int field options
 	$('#bottom_time_select').change(
-		function () {
+	function () {
 		value = $('#bottom_time_select').val();
 		depth = $('#depth_select').val();
 		//alert(value);
@@ -67,10 +60,10 @@ $(document).ready(
 	})
 	//ajax function for AddDive selection to update graph and final calculations
 	$('#addDiveForm').on('submit',
-		function (e) {
-    e.preventDefault();
+	function (e) {
+		e.preventDefault();
 		//debug mode!
-	var debug = false;
+		var debug = false;
 		if(debug == true){
 			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
 			//alert(formValues);
@@ -87,11 +80,11 @@ $(document).ready(
 					//console.log("failed");
 				}
 			});
-		
-		
+			
+			
 		}
-	else{
-	
+		else{
+			
 			var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
 			//alert(formValues);
 			$.ajax({
@@ -102,6 +95,28 @@ $(document).ready(
 					//console.log("hello");
 					//console.log(data);
 					$('#dives').html(data);
+					$('input:radio[name=diveRadio]').change(
+					function(){
+						
+						value = $('input:radio[name=diveRadio]:checked').val();
+						$.ajax({
+							type : 'POST',
+							url : 'ajax_handler.php',
+							data : {
+								action : 'select_dive_to_edit',
+								diveNum : value
+							},
+							success : function (result) {
+
+								console.log(result);
+								//$('#bottom_time_select').html(result);
+
+							}
+						});
+					}
+					);
+					
+					
 				},
 				error : function () {
 					//console.log("failed");
@@ -112,24 +127,4 @@ $(document).ready(
 	})
 
 	
-
-	/*$("input[name=dives]").change(
-		function () {
-		alert("hello");
-		value = $('input:radio[name=dives]:checked').val();
-		alert(value);
-		$.ajax({
-			type : 'POST',
-			url : 'ajax_handler.php',
-			data : {
-				action : 'select_dive_to_edit',
-				diveNum : value
-			},
-			success : function (result) {
-				console.log(result);
-				//$('#bottom_time_select').html(result);
-
-			}
-		});
-	})*/
 })

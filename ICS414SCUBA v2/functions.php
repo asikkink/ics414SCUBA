@@ -228,21 +228,21 @@ function getDives($db, $profileID) {
 		$diveInfo = "";
 		for($i=1;$i<=mysqli_num_rows($result);$i++){
 			$data = mysqli_fetch_assoc($result);
-			$diveInfo .= "<input type='radio' name='dives' id='$i' value='$i'";
+			$diveInfo .= "<input type='radio' name='diveRadio' id='$i' value='$i'";
 			if ($i == mysqli_num_rows($result)) {
 				$diveInfo .= " checked";
 			}
 			$diveInfo .= "> <strong>Dive $i:</strong> {$data['depth']} ft. for {$data['time']} min.<br>";
  			
 		}
-		echo $diveInfo;
+		return $diveInfo;
 	}
 }
 
 function showDive($db, $POST) {
 	$profileID = 1;
-
-	$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
+	
+	$sql = "SELECT `depth`, `time`, `surface_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
 
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
