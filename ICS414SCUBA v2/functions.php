@@ -242,13 +242,13 @@ function getDives($db, $profileID) {
 function showDive($db, $POST) {
 	$profileID = 1;
 	
-	$sql = "SELECT `depth`, `time`, `surface_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
+	$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
 
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
 		$test = mysqli_fetch_assoc($result);
-		echo $test['depth'];
+		echo json_encode($test);
 	}
 
 }

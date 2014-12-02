@@ -106,12 +106,17 @@ function () {
 								action : 'select_dive_to_edit',
 								diveNum : value
 							},
+							dataType: "json",
 							success : function (result) {
-
-								console.log(result);
-								//$('#bottom_time_select').html(result);
-
+								//console.log(result['depth'] + " " + result['time'] + " " + result['surf_int']);
+								$('#depth_select option:selected').attr("selected",null);
+								$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
+								$('#bottom_time_select option:selected').attr("selected", null);
+								$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
+								$('#surface_int_select option:selected').attr("selected", null);
+								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
 							}
+
 						});
 					}
 					);
