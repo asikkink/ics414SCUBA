@@ -6,8 +6,12 @@
 <link rel="stylesheet" type="text/css" href="css/plannerstyle.css">
 <link rel="stylesheet" href="css/jquery-ui.min.css">
 <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="js/diveChart.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax.js"></script>
+
+
 </head>
 <body>
 <div id="container" class="container">
@@ -17,29 +21,19 @@
 </div>
 <div class="row">
 <div class="col-md-12">
-<canvas id="dive_graph" style="border:5px solid #000000;"></canvas>
+
+<div id="chart_div"></div>
+<!--<canvas id="dive_graph" style="border:5px solid #000000;"></canvas>-->
+
+
 </div>
 </div>
 <div id="inputs" class="row">
 <div class="col-md-4"><h3>Planned Dives</h3>
 <div id="dives">
-<strong>Dive 1:</strong> 40ft for 10 minutes
+
 </div>
-<form class="form-horizontal" role="form">
-<div class="form-group">
-<label class="col-sm-8 control-label"> Edit in Dive Planner:</label>
-<div class="col-sm-4">
-<select class="form-control" disabled>
-<option>1</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5</option>
-</select>
-</div>
-</div>
-<button type="submit" class="btn btn-info btn-sm disabled"> Edit Dive</button>
-</form>
+
 </div>
 <div class="col-md-4"><h3>Dive Planner</h3>
 <form id="addDiveForm" name="addDiveForm" class="form-horizontal" role="form">

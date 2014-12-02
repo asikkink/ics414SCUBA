@@ -3,11 +3,14 @@ google.load("visualization", "1", {packages:["corechart"]});
 google.setOnLoadCallback(drawChart);
 function drawChart(){
 	var data = google.visualization.arrayToDataTable([
-	['Director (Year)',  'Rotten Tomatoes', 'IMDB'],
-	['Alfred Hitchcock (1935)', 8.4,         7.9],
-	['Ralph Thomas (1959)',     6.9,         6.5],
-	['Don Sharp (1978)',        6.5,         6.4],
-	['James Hawes (2008)',      4.4,         6.2]
+	['Director (Year)',  'Depth', 'Stops'],
+	['Alfred Hitchcock (1935)', 55, 15],
+	['Ralph Thomas (1959)',     65,15],
+	['Don Sharp (1978)',        25,15],
+	['Don Sharp (1978)',        5,15],
+	['Don Sharp (1978)',        35,15],
+	['Don Sharp (1978)',       20,15],
+	['James Hawes (2008)',      25,15]
 	]);
 
 	var options = {
@@ -20,3 +23,6 @@ isStacked: true
 
 	chart.draw(data, options);
 }
+
+//
+function drawChart()
