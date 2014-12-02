@@ -95,7 +95,7 @@ function addDive($db, $POST){
 	//=========================
 	$residualTime = getResidualTime($db, $initialPG, $depth);
 	$time = $residualTime + $time;
-	echo $residualTime;
+	//echo $residualTime;
 	//===========================
 	
 	$postDivePG = getPostDivePG($db, $depth, $time);
@@ -107,9 +107,12 @@ function addDive($db, $POST){
 	'$time', '$postDivePG', '$surfInt', '$postSurfacePG') ";
 	mysqli_query($db, $sql);
 	
-	echo "id: $profileID, diveNum: $diveNum, depth:$depth, time: $time, surfInt:$surfInt";
-	echo "\tInitialPG: $initialPG, PostDivePG: $postDivePG, PostSurfIntPG: $postSurfacePG\n";
+	$diveInfo = getDives($db, $profileID);
+
+	//echo "id: $profileID, diveNum: $diveNum, depth:$depth, time: $time, surfInt:$surfInt";
+	//echo "\tInitialPG: $initialPG, PostDivePG: $postDivePG, PostSurfIntPG: $postSurfacePG\n";
 	
+	echo $diveInfo;
 	
 }
 
@@ -196,6 +199,59 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 }
 
 
+/*function getDives($db, $profileID) {
+
+	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else if(mysqli_num_rows($result)){
+		$diveInfo = "";
+		for($i=1;$i<=mysqli_num_rows($result);$i++){
+			$data = mysqli_fetch_assoc($result);
+			$diveInfo .= "<input type='radio' name='dives' id='$i' value='$i'";
+			if ($i == mysqli_num_rows($result)) {
+				$diveInfo .= " checked";
+			}
+			$diveInfo .= "> <strong>Dive $i:</strong> {$data['depth']} ft. for {$data['time']} min.<br>";
+ 			
+		}
+		echo $diveInfo;
+	}
+}*/
+
+function getDives($db, $profileID) {
+
+	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else if(mysqli_num_rows($result)){
+		$diveInfo = "";
+		for($i=1;$i<=mysqli_num_rows($result);$i++){
+			$data = mysqli_fetch_assoc($result);
+			$diveInfo .= "<input type='radio' name='dives' id='$i' value='$i'";
+			if ($i == mysqli_num_rows($result)) {
+				$diveInfo .= " checked";
+			}
+			$diveInfo .= "> <strong>Dive $i:</strong> {$data['depth']} ft. for {$data['time']} min.<br>";
+ 			
+		}
+		echo $diveInfo;
+	}
+}
+
+function showDive($db, $POST) {
+	$profileID = 1;
+
+	$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
+
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else {
+		$test = mysqli_fetch_assoc($result);
+		echo $test['depth'];
+	}
+
+}
 
 
 

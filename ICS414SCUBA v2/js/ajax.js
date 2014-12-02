@@ -15,6 +15,14 @@ $(document).ready(
 		}
 	});
 
+
+	$('input[name=dives]').change(
+		function () {
+		alert("hello");
+		value = $('input:radio[name=dives]:checked').val();
+		alert(value);
+	});
+
 	//ajax function for depth selection to update bottom time field options
 	$('#depth_select').change(
 		function () {
@@ -71,7 +79,7 @@ $(document).ready(
 				url : "testCases.php",
 				data : formValues,
 				success : function (data) {
-			//		$('#surface_int_select').html(result);
+					//$('#surface_int_select').html(result);
 					//console.log("hello");
 					console.log(data);
 				},
@@ -91,9 +99,9 @@ $(document).ready(
 				url : "ajax_handler.php",
 				data : formValues,
 				success : function (data) {
-			//		$('#surface_int_select').html(result);
 					//console.log("hello");
-					console.log(data);
+					//console.log(data);
+					$('#dives').html(data);
 				},
 				error : function () {
 					//console.log("failed");
@@ -103,4 +111,25 @@ $(document).ready(
 
 	})
 
+	
+
+	/*$("input[name=dives]").change(
+		function () {
+		alert("hello");
+		value = $('input:radio[name=dives]:checked').val();
+		alert(value);
+		$.ajax({
+			type : 'POST',
+			url : 'ajax_handler.php',
+			data : {
+				action : 'select_dive_to_edit',
+				diveNum : value
+			},
+			success : function (result) {
+				console.log(result);
+				//$('#bottom_time_select').html(result);
+
+			}
+		});
+	})*/
 })

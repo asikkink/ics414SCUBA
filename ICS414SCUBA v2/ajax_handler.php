@@ -12,6 +12,7 @@ if(isset($_POST['action'])){
 	case 'select_max_depth': selectDepth($db,$_POST); break;
 	case 'select_bottom_time': selectBottomTime($db,$_POST); break;
 	case 'addingDive': addDive($db, $_POST); break;
+	case 'select_dive_to_edit': showDive($db, $_POST); break;
 	default: echo "No POST data sent to server."; break;
 	}
 }else{
