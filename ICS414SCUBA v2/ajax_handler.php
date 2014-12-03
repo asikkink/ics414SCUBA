@@ -14,6 +14,7 @@ if(isset($_POST['action'])){
 	case 'addingDive': addDive($db, $_POST); break;
 	case 'select_dive_to_edit': showDive($db, $_POST); break;
 	case 'get_dive_data': getDiveData($db);break;
+	case 'refresh': refreshVals($db); break;
 	
 	default: echo "No POST data sent to server."; break;
 	}

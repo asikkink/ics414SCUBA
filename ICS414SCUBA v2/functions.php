@@ -5,25 +5,31 @@
 //set the initial values for the max depth field
 function initialize($db,$POST){
 	if(isset($POST['init'])){
-		//set sql statement
-		$sql = "SELECT DISTINCT `depth` from `bottom_time` ORDER BY `depth` ASC";
-		//see if there is a result when we run the query
-		if(!$result = mysqli_query($db, $sql)){
-			//if no result, there was an error
-			echo "MySQL error:".mysqli_error();
-		}
-		//if there is no mysql error, see if any rows were returned from the query
-		else if(mysqli_num_rows($result)){
-			$response = "";
-			for($i=0;$i<mysqli_num_rows($result);$i++){
-				$data = mysqli_fetch_assoc($result);
-				$response .= "<option value='{$data['depth']}'>{$data['depth']}</option>";
-			}
-			echo $response;
-		}
+		refreshVals($db);
 		//send error
 	}else echo "No rows returned by database.";
 }
+
+function refreshVals($db) {
+	//set sql statement
+	$sql = "SELECT DISTINCT `depth` from `bottom_time` ORDER BY `depth` ASC";
+	//see if there is a result when we run the query
+	if(!$result = mysqli_query($db, $sql)){
+		//if no result, there was an error
+		echo "MySQL error:".mysqli_error();
+	}
+	//if there is no mysql error, see if any rows were returned from the query
+	else if(mysqli_num_rows($result)){
+		$response = "";
+		for($i=0;$i<mysqli_num_rows($result);$i++){
+			$data = mysqli_fetch_assoc($result);
+			$response .= "<option value='{$data['depth']}'>{$data['depth']}</option>";
+		}
+		echo $response;
+	}
+}
+
+
 /**If a specific depth has been selected, retrieve the bottom times for that depth
 *  Field affected: Bottom Time(minutes)
 ====================================================================================

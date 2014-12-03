@@ -14,7 +14,6 @@ function () {
 		}
 	});
 
-
 	
 	//ajax function for depth selection to update bottom time field options
 	$('#depth_select').change(
@@ -95,6 +94,7 @@ function () {
 					//console.log("hello");
 					//console.log(data);
 					$('#dives').html(data);
+					$('#addDive').text('Save Dive');
 					$('input:radio[name=diveRadio]').change(
 					function(){
 						
@@ -115,6 +115,8 @@ function () {
 								$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
 								$('#surface_int_select option:selected').attr("selected", null);
 								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
+
+								$('#addDive').text('Save Dive');
 							}
 
 						});
@@ -130,6 +132,23 @@ function () {
 		}
 
 	})
-
+	
+	$('#newDive').click(
+		function () {
+			$.ajax({
+				type : 'POST',
+				url : 'ajax_handler.php',
+				data : {
+					action : "refresh",
+				},
+				success : function (result) {
+					//console.log(result);
+					$('#depth_select').html(result);
+					$('#bottom_time_select').empty();
+					$('#surface_int_select').empty();
+					$('#addDive').text('Add Dive');
+				}
+			});
+	})
 	
 })
