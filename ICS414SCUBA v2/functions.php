@@ -100,7 +100,7 @@ function addDive($db, $POST){
 	*/
 	//=========================
 	$residualTime = getResidualTime($db, $initialPG, $depth);
-	$time = $residualTime + $time;
+	//$time = $residualTime + $time;
 	//echo $residualTime;
 	//===========================
 	
@@ -110,7 +110,7 @@ function addDive($db, $POST){
 	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
 	//insert values into table
 	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
-	'$time', '$postDivePG', '$surfInt', '$postSurfacePG') ";
+	'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
 	mysqli_query($db, $sql);
 	
 	$diveInfo = getDives($db, $profileID);
@@ -266,7 +266,7 @@ function getDiveData($db){
 	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID'";
 	
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) echo 0;
 	else {
 		$json = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		echo json_encode($json);

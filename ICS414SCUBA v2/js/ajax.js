@@ -1,5 +1,9 @@
 $(document).ready(
+
+
+
 function () {
+
 	//ajax called at dom initialization to update depth field with options
 	$.ajax({
 		type : 'POST',
@@ -65,7 +69,7 @@ function () {
 		var debug = false;
 		if(debug == true){
 			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
-			//alert(formValues);
+			//console.log(formValues);
 			$.ajax({
 				type : "POST",
 				url : "testCases.php",
@@ -85,6 +89,7 @@ function () {
 		else{
 			
 			var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
+			//console.log(formValues);
 			//alert(formValues);
 			$.ajax({
 				type : "POST",
@@ -93,8 +98,10 @@ function () {
 				success : function (data) {
 					//console.log("hello");
 					//console.log(data);
+					
 					$('#dives').html(data);
 					$('#addDive').text('Save Dive');
+					drawChart();
 					$('input:radio[name=diveRadio]').change(
 					function(){
 						
