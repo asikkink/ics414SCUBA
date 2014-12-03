@@ -257,7 +257,7 @@ function showDive($db, $POST) {
 function getDiveData($db){
 	$profileID = 1;
 	
-	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID'";
+	$sql = "SELECT `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID'";
 	
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) echo 0;
