@@ -94,7 +94,7 @@ function addDive($db, $POST){
 	*/
 	//=========================
 	$residualTime = getResidualTime($db, $initialPG, $depth);
-	$time = $residualTime + $time;
+	//$time = $residualTime + $time;
 	//echo $residualTime;
 	//===========================
 	
@@ -104,7 +104,7 @@ function addDive($db, $POST){
 	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
 	//insert values into table
 	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
-	'$time', '$postDivePG', '$surfInt', '$postSurfacePG') ";
+	'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
 	mysqli_query($db, $sql);
 	
 	$diveInfo = getDives($db, $profileID);

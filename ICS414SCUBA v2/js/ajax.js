@@ -66,7 +66,7 @@ function () {
 		var debug = false;
 		if(debug == true){
 			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
-			//alert(formValues);
+			//console.log(formValues);
 			$.ajax({
 				type : "POST",
 				url : "testCases.php",
@@ -86,6 +86,7 @@ function () {
 		else{
 			
 			var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
+			//console.log(formValues);
 			//alert(formValues);
 			$.ajax({
 				type : "POST",
