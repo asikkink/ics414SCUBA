@@ -133,7 +133,7 @@ function () {
 					
 				},
 				error : function () {
-					//console.log("failed");
+					console.log("failed");
 				}
 			});
 		}
