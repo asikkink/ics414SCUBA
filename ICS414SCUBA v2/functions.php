@@ -205,26 +205,6 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 }
 
 
-/*function getDives($db, $profileID) {
-
-	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
-	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
-	if(mysqli_num_rows($result) == 0) return "broken";
-	else if(mysqli_num_rows($result)){
-		$diveInfo = "";
-		for($i=1;$i<=mysqli_num_rows($result);$i++){
-			$data = mysqli_fetch_assoc($result);
-			$diveInfo .= "<input type='radio' name='dives' id='$i' value='$i'";
-			if ($i == mysqli_num_rows($result)) {
-				$diveInfo .= " checked";
-			}
-			$diveInfo .= "> <strong>Dive $i:</strong> {$data['depth']} ft. for {$data['time']} min.<br>";
- 			
-		}
-		echo $diveInfo;
-	}
-}*/
-
 function getDives($db, $profileID) {
 
 	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
@@ -254,6 +234,9 @@ function showDive($db, $POST) {
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
 		$test = mysqli_fetch_assoc($result);
+		//call select Depth to correct bottom time field
+		
+		
 		echo json_encode($test);
 	}
 

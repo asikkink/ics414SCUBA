@@ -17,6 +17,8 @@ success: function(results){
 			var surfInt;
 			var time;
 			var depth = 0;
+			var postDivePG = "";
+			var postSurfIntPG = "";
 			// console.log(myJson);
 			// console.log(myJson[0].depth);
 			// console.log(myJson.length);
@@ -32,8 +34,8 @@ success: function(results){
 				data.addRow(
 				[time, depth, 0]
 				);
-				console.log(myJson[i].depth);
-				console.log(myJson[i].time);
+				// console.log(myJson[i].depth);
+				// console.log(myJson[i].time);
 			}
 			var options = {
 			bar: {groupWidth: '50%'},

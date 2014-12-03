@@ -104,6 +104,8 @@ function () {
 					drawChart();
 					$('input:radio[name=diveRadio]').change(
 					function(){
+						//variable for depth to call getDepth
+						var resultArray;
 						
 						value = $('input:radio[name=diveRadio]:checked').val();
 						$.ajax({
@@ -113,8 +115,30 @@ function () {
 								action : 'select_dive_to_edit',
 								diveNum : value
 							},
-							dataType: "json",
+dataType: "json",
 							success : function (result) {
+								//will use the ['depth'] 
+								/*Ugly ajax code again
+								*===============================================
+								* Reloads the Bottom Time Field so the correct options are displayed
+								*/
+								value = result['depth'];
+								$.ajax({
+									type : 'POST',
+									url : 'ajax_handler.php',
+									data : {
+										action : 'select_max_depth',
+										depth : value
+									},
+									async: false,
+									success : function (result) {
+										//console.log(result);
+										$('#bottom_time_select').html(result);
+
+									}
+								});
+								//================================================
+								
 								//console.log(result['depth'] + " " + result['time'] + " " + result['surf_int']);
 								$('#depth_select option:selected').attr("selected",null);
 								$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
@@ -141,21 +165,21 @@ function () {
 	})
 	
 	$('#newDive').click(
-		function () {
-			$.ajax({
-				type : 'POST',
-				url : 'ajax_handler.php',
-				data : {
-					action : "refresh",
-				},
-				success : function (result) {
-					//console.log(result);
-					$('#depth_select').html(result);
-					$('#bottom_time_select').empty();
-					$('#surface_int_select').empty();
-					$('#addDive').text('Add Dive');
-				}
-			});
+	function () {
+		$.ajax({
+			type : 'POST',
+			url : 'ajax_handler.php',
+			data : {
+				action : "refresh",
+			},
+			success : function (result) {
+				//console.log(result);
+				$('#depth_select').html(result);
+				$('#bottom_time_select').empty();
+				$('#surface_int_select').empty();
+				$('#addDive').text('Add Dive');
+			}
+		});
 	})
 	
 })
