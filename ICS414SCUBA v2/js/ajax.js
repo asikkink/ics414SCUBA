@@ -1,5 +1,9 @@
 $(document).ready(
+
+
+
 function () {
+
 	//ajax called at dom initialization to update depth field with options
 	$.ajax({
 		type : 'POST',
@@ -95,7 +99,9 @@ function () {
 				success : function (data) {
 					//console.log("hello");
 					//console.log(data);
+					
 					$('#dives').html(data);
+					drawChart();
 					$('input:radio[name=diveRadio]').change(
 					function(){
 						

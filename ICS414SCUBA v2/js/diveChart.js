@@ -2,9 +2,6 @@
 google.load("visualization", "1", {packages:["corechart"]});
 google.setOnLoadCallback(drawChart);
 
-// $('#addDive').on('click', function(){
-	// drawChart();
-// });
 
 
 
