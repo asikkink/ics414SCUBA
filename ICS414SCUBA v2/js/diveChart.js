@@ -12,6 +12,42 @@ function drawChart(){
 	['Don Sharp (1978)',       20,15],
 	['James Hawes (2008)',      25,15]
 	]);
+	
+	//get dive rows
+	$.ajax({
+		type : 'POST',
+		url : 'ajax_handler.php',
+		data :{
+			action : 'get_dive_data'
+		},
+		success: function(results){
+			var myJson = JSON.parse(results);
+			var time = 0;
+			var depth = 0;
+			// console.log(myJson);
+			// console.log(myJson[0].depth);
+			// console.log(myJson.length);
+			var data = new google.visualization.DataTable();
+			data.addColumn('number', 'Time');
+			data.addColumn('number', 'Depth');
+			for(var i = 0; i < myJson.length; i++){
+				time = parseInt(myJson[i].time);
+				depth = myJson[i].depth;
+				data.addRow(
+					[time, depth]
+				);
+				console.log(myJson[i].depth);
+				console.log(myJson[i].time);
+			}
+			
+		},
+		error: function(){
+			console.log('failure');
+		}
+	
+	
+	})
+	
 
 	var options = {
 title: 'The decline of \'The 39 Steps\'',
