@@ -19,11 +19,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-
 				<div id="chart_div"></div>
-				<!--<canvas id="dive_graph" style="border:5px solid #000000;"></canvas>-->
-
-
 			</div>
 		</div>
 		<div id="inputs" class="row">
@@ -83,18 +79,18 @@
 				</form>
 			</div>
 			<div class="col-md-4"><h3>Dive Profile Details</h3>
-				<form class="form-horizontal" role="form">
+				<form class="form-horizontal" role="form" action="print_dive.php" method="POST">
 					<div class="form-group">
 						<label class="col-sm-3 control-label">Dive #:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" placeholder="01">
+							<input type="text" class="form-control" placeholder="01" name="did">
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">Date:</label>
 						<div class="col-sm-9">
 							<div class="input-group">
-								<input type="text" id="date-picker" class="date-picker form-control" placeholder="11/6/14">
+								<input type="text" id="date-picker" class="date-picker form-control" placeholder="11/6/14" name="dd">
 								<label for="date-picker" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span></label>
 							</div>
 						</div>
@@ -102,13 +98,13 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label">Dive Buddies:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" placeholder="Victor, Eva...">
+							<input type="text" class="form-control" placeholder="Victor, Eva..." name="db">
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">Location:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" placeholder="Beach">
+							<input type="text" class="form-control" placeholder="Beach" name="dl">
 						</div>
 					</div>
 					<button type="submit" class="btn btn-default btn-lg" style="float:right">Finish</button>

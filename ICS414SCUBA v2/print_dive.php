@@ -29,10 +29,10 @@ $(document).ready(
 			<div id="chart_div"></div>
 		</div>
 		<div class="col-md-4">
-			<strong>Dive #:</strong> 1<br />
-			<strong>Date:</strong> 11-6-14<br />
-			<strong>Dive Buddies:</strong> Victor, Eva...<br />
-			<strong>Location:</strong> Beach<br />
+			<strong>Dive #:</strong> <?php echo $_POST["did"]; ?><br />
+			<strong>Date:</strong> <?php echo $_POST["dd"]; ?><br />
+			<strong>Dive Buddies:</strong> <?php echo $_POST["db"]; ?><br />
+			<strong>Location:</strong> <?php echo $_POST["dl"]; ?><br />
 		</div>
 	</div>
 </div>
