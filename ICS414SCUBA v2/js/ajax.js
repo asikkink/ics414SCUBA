@@ -123,20 +123,7 @@ dataType: "json",
 								* Reloads the Bottom Time Field so the correct options are displayed
 								*/
 								value = result['depth'];
-								$.ajax({
-									type : 'POST',
-									url : 'ajax_handler.php',
-									data : {
-										action : 'select_max_depth',
-										depth : value
-									},
-									async: false,
-									success : function (result) {
-										//console.log(result);
-										$('#bottom_time_select').html(result);
-
-									}
-								});
+								displayBottomTime(value);
 								//================================================
 								
 								//console.log(result['depth'] + " " + result['time'] + " " + result['surf_int']);
@@ -183,3 +170,55 @@ dataType: "json",
 	})
 	
 })
+//Organized code... for that long nested ajax code
+//This one works
+function displayBottomTime(depth){
+	$.ajax({
+		type : 'POST',
+		url : 'ajax_handler.php',
+		data : {
+			action : 'select_max_depth',
+			depth : value
+		},
+async: false,
+		success : function (result) {
+			//console.log(result);
+			$('#bottom_time_select').html(result);
+
+		}
+	});
+}
+//Not able to keep it out of the ajax without something breaking
+// function displayEdit(value){
+	// $.ajax({
+		// type : 'POST',
+		// url : 'ajax_handler.php',
+		// data : {
+			// action : 'select_dive_to_edit',
+			// diveNum : value
+		// },
+// dataType: "json",
+		// success : function (result) {
+			// //will use the ['depth'] 
+			// /*Ugly ajax code again
+								// *===============================================
+								// * Reloads the Bottom Time Field so the correct options are displayed
+								// */
+			// depth = result['depth'];
+			// displayBottomTime(depth);
+			// //================================================
+			
+			// //console.log(result['depth'] + " " + result['time'] + " " + result['surf_int']);
+			// $('#depth_select option:selected').attr("selected",null);
+			// $('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
+			// $('#bottom_time_select option:selected').attr("selected", null);
+			// $('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
+			// $('#surface_int_select option:selected').attr("selected", null);
+			// $('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
+
+			// $('#addDive').text('Save Dive');
+		// }
+
+	// });
+// }
+
