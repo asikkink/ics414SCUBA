@@ -12,6 +12,8 @@ function () {
 		success : function (result) {
 			//console.log(result);
 			$('#depth_select').html(result);
+				$('#bottom_time_select').prop("disabled", true);
+				$('#surface_int_select').prop("disabled", true);
 		}
 	});
 
@@ -31,6 +33,7 @@ function () {
 			success : function (result) {
 				//console.log(result);
 				$('#bottom_time_select').html(result);
+				$('#bottom_time_select').prop("disabled", false); 
 
 			}
 		});
@@ -53,6 +56,7 @@ function () {
 			success : function (result) {
 				//console.log(result);
 				$('#surface_int_select').html(result);
+				$('#surface_int_select').prop("disabled", false);
 
 			}
 		});
@@ -160,7 +164,9 @@ dataType: "json",
 				//console.log(result);
 				$('#depth_select').html(result);
 				$('#bottom_time_select').empty();
+				$('#bottom_time_select').prop("disabled", true);
 				$('#surface_int_select').empty();
+				$('#surface_int_select').prop("disabled", true);
 				$('#addDive').text('Add Dive');
 			}
 		});
