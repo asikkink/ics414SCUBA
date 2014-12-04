@@ -27,7 +27,7 @@ success: function(results){
 			data.addColumn({ type: 'number', label: 'Depth' });
 			data.addColumn({ type: 'string', role: 'annotation' });
 			//Add tooltips
-			data.addColumn({type: 'string', role: 'tooltip'});
+			data.addColumn({type: 'string', role: 'tooltip','p': {'html': true}});
 			for(var i = 0; i < myJson.length; i++){
 				//Initialize variables
 				diveNum = myJson[i].dive_num;
@@ -36,10 +36,11 @@ success: function(results){
 				time = (myJson[i].time);
 				postDivePG = myJson[i].post_dive_pg;
 				postSurfIntPG = myJson[i].post_surf_int_pg;
+				residual_time = myJson[i].residual_time;
 				//Add dive row
 				data.addRows([
-				['Dive '+ diveNum , depth, depth, time +" min", "Post dive pg: "+ postDivePG], //dive 1
-				['Rest '+ diveNum, 0, 0, surfInt +" min", "Post surf interval pg: "+ postSurfIntPG], //surface
+				['Dive '+ diveNum , depth, depth, time +" min", "<b>Pressure Group <br>after Dive:</b> "+ postDivePG], //dive 1
+				['Rest '+ diveNum, 0, 0, surfInt +" min", "<b>Pressure Group<br> after Surface Interval:</b> "+ postSurfIntPG+"<br><b>Residual Nitrogen Time: </b>"+residual_time], //surface
 				]);
 				var barchart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 				var options = {series: [{ type: 'bars' },

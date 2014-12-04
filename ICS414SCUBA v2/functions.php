@@ -20,7 +20,7 @@ function refreshVals($db) {
 	}
 	//if there is no mysql error, see if any rows were returned from the query
 	else if(mysqli_num_rows($result)){
-		$response = "";
+		$response = "<option value='' selected disabled>Choose...</option>";
 		for($i=0;$i<mysqli_num_rows($result);$i++){
 			$data = mysqli_fetch_assoc($result);
 			$response .= "<option value='{$data['depth']}'>{$data['depth']}</option>";
@@ -96,19 +96,22 @@ function addDive($db, $POST){
 	//get current dive values
 	$initialPG = getInitialPG($db, $profileID, $diveNum-1);
 	
+	
+	$postDivePG = getPostDivePG($db, $depth, $time);
+	
+	
+	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
+	
 	/**Include Residual Time
-	*/
+	* Residual time is calculated as postSurfacePG + depth -> residual time and Total bottom time*/
 	//=========================
-	$residualTime = getResidualTime($db, $initialPG, $depth);
+	$residualTime = getResidualTime($db, $postSurfacePG, $depth);
 	$totalTime = $residualTime + $time;
 	//$time = $residualTime + $time;
 	//echo $residualTime;
 	//===========================
 	
-	$postDivePG = getPostDivePG($db, $depth, $totalTime);
 	
-	
-	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
 	//insert values into table
 	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
 	'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
@@ -145,7 +148,7 @@ function getDiveNum($db, $profileID){
 function getInitialPG($db, $profileID, $prevDiveNum){
 	//if no previous dives, initialize first one
 	$sql = "SELECT `post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
-	
+	error_log("getInitPG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	//if empty table returned, there is no dive yet
 	if(mysqli_num_rows($result) == 0) $init_pressure_group = null; 
@@ -165,6 +168,7 @@ function getInitialPG($db, $profileID, $prevDiveNum){
 function getPostDivePG($db, $depth, $time){
 
 	$sql = "SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '$depth' AND `time` >= '$time'";
+	error_log("getPostDivePG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
@@ -176,10 +180,12 @@ function getPostDivePG($db, $depth, $time){
 
 /**Get residual time. Pressure group -> Depth = Residual time
 *  Used: getPostDivePG will need to add residual time to $time to get total time.
+* EDIT: Residual time is calculated with the PG after the surface interval...
 */
-function getResidualTime($db, $initialPG, $depth){
-	if($initialPG == null) return 0;
-	$sql = "SELECT `residual_time` FROM `residual_time` WHERE `pressure_group` = '$initialPG' and `depth` = '$depth'";
+function getResidualTime($db, $postSurfacePG, $depth){
+	if($postSurfacePG == null) return 0;
+	$sql = "SELECT `residual_time` FROM `residual_time` WHERE `pressure_group` = '$postSurfacePG' and `depth` = '$depth'";
+	error_log("getResidTime: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	
 	if(mysqli_num_rows($result) == 0) return "broken";
@@ -196,6 +202,7 @@ function getResidualTime($db, $initialPG, $depth){
 function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
 	$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `init_pressure_group` = '$postDivePG' AND `end_time` >= '$surfInt'";
+	error_log("getPostSurfaceIntPG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
@@ -248,7 +255,7 @@ function showDive($db, $POST) {
 function getDiveData($db){
 	$profileID = 1;
 	
-	$sql = "SELECT `dive_num`, `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID'";
+	$sql = "SELECT `dive_num`, `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg`, `residual_time` FROM `dives` WHERE `profile_id` = '$profileID'";
 	
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) echo 0;
