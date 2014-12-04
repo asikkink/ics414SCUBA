@@ -255,7 +255,6 @@ function getDiveData($db){
 		echo json_encode($json);
 	}
 
-
 }
 
 
