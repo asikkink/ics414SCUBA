@@ -100,11 +100,12 @@ function addDive($db, $POST){
 	*/
 	//=========================
 	$residualTime = getResidualTime($db, $initialPG, $depth);
+	$totalTime = $residualTime + $time;
 	//$time = $residualTime + $time;
 	//echo $residualTime;
 	//===========================
 	
-	$postDivePG = getPostDivePG($db, $depth, $time);
+	$postDivePG = getPostDivePG($db, $depth, $totalTime);
 	
 	
 	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
@@ -239,6 +240,7 @@ function showDive($db, $POST) {
 		
 		echo json_encode($test);
 	}
+	closeDB($db);
 
 }
 
@@ -254,9 +256,14 @@ function getDiveData($db){
 		$json = mysqli_fetch_all($result, MYSQLI_ASSOC);
 		echo json_encode($json);
 	}
+	closeDB($db);
 
 }
 
+//Simple close db connection function
+function closeDB($db){
+	mysqli_close($db);
+}
 
 
 ?>

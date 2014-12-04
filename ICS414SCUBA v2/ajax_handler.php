@@ -18,6 +18,7 @@ if(isset($_POST['action'])){
 	
 	default: echo "No POST data sent to server."; break;
 	}
+
 }else{
 	echo "No POST data sent to server.";
 }
