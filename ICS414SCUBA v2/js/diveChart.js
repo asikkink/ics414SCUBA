@@ -48,7 +48,9 @@ success: function(results){
 					direction: -1
 					},
 					bar: {groupWidth: '100%'},
-					tooltip: {isHtml: true}
+					tooltip: {isHtml: true},
+					//colors: ['a color'],
+					backgroundColor: '#E4E4E4'
 				};
 
 				barchart.draw(data, options);

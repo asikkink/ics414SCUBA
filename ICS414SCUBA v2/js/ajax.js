@@ -1,7 +1,4 @@
 $(document).ready(
-
-
-
 function () {
 
 	//ajax called at dom initialization to update depth field with options
@@ -188,37 +185,5 @@ async: false,
 		}
 	});
 }
-//Not able to keep it out of the ajax without something breaking
-// function displayEdit(value){
-	// $.ajax({
-		// type : 'POST',
-		// url : 'ajax_handler.php',
-		// data : {
-			// action : 'select_dive_to_edit',
-			// diveNum : value
-		// },
-// dataType: "json",
-		// success : function (result) {
-			// //will use the ['depth'] 
-			// /*Ugly ajax code again
-								// *===============================================
-								// * Reloads the Bottom Time Field so the correct options are displayed
-								// */
-			// depth = result['depth'];
-			// displayBottomTime(depth);
-			// //================================================
-			
-			// //console.log(result['depth'] + " " + result['time'] + " " + result['surf_int']);
-			// $('#depth_select option:selected').attr("selected",null);
-			// $('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
-			// $('#bottom_time_select option:selected').attr("selected", null);
-			// $('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
-			// $('#surface_int_select option:selected').attr("selected", null);
-			// $('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
 
-			// $('#addDive').text('Save Dive');
-		// }
-
-	// });
-// }
 
