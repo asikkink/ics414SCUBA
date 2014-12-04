@@ -96,8 +96,9 @@ function addDive($db, $POST){
 	//get current dive values
 	$initialPG = getInitialPG($db, $profileID, $diveNum-1);
 	
-	
-	$postDivePG = getPostDivePG($db, $depth, $time);
+	//in order to get an accurate pg, need to calculate the residual(from last dive) + time and send that to the getPostDivePG function
+	$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
+	$postDivePG = getPostDivePG($db, $depth, $time+$prevDiveResidual);
 	
 	
 	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
@@ -270,6 +271,22 @@ function getDiveData($db){
 //Simple close db connection function
 function closeDB($db){
 	mysqli_close($db);
+}
+
+function getPrevDiveResidual($db, $profileID, $prevDiveNum){
+$sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
+	error_log("getPrev: $sql");
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	//if empty table returned, there is no dive yet
+	if(mysqli_num_rows($result) == 0) $residual_time = 0; 
+	//else we have the residual time from the previous dive
+	else {
+		//take last dive num and grab post_surf_int_pg from results
+		$prevDive = mysqli_fetch_assoc($result);
+		$residual_time = $prevDive['residual_time'];
+		error_log($residual_time);
+	}
+	return $residual_time;	
 }
 
 
