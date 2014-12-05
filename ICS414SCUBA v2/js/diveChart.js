@@ -44,7 +44,7 @@ success: function(results){
 				]);
 				var barchart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 				var options = {
-					series: [{ type: 'bars' },
+					series: [{ type: 'bars', visibleInLegend: false },
 						{ type: 'line', lineWidth: 0, visibleInLegend:false, pointSize: 0}],
 					vAxis: {
 						title: 'Depth of Dive',
