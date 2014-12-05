@@ -102,6 +102,8 @@ function () {
 					
 					$('#dives').html(data);
 					$('#addDive').text('Save Dive');
+					$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
+
 					drawChart();
 					$('input:radio[name=diveRadio]').change(
 					function(){
@@ -116,7 +118,7 @@ function () {
 								action : 'select_dive_to_edit',
 								diveNum : value
 							},
-dataType: "json",
+							dataType: "json",
 							success : function (result) {
 								//will use the ['depth'] 
 								/*Ugly ajax code again
@@ -127,13 +129,14 @@ dataType: "json",
 								displayBottomTime(value);
 								//================================================
 								
-								//console.log(result['depth'] + " " + result['time'] + " " + result['surf_int']);
+								//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
 								$('#depth_select option:selected').attr("selected",null);
 								$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
 								$('#bottom_time_select option:selected').attr("selected", null);
 								$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
 								$('#surface_int_select option:selected').attr("selected", null);
 								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
+								$('#diveNumber').val(result['dive_num']);
 
 								$('#addDive').text('Save Dive');
 							}
@@ -167,6 +170,8 @@ dataType: "json",
 				$('#bottom_time_select').prop("disabled", true);
 				$('#surface_int_select').empty();
 				$('#surface_int_select').prop("disabled", true);
+				$('#diveNumber').val(0);
+
 				$('#addDive').text('Add Dive');
 			}
 		});

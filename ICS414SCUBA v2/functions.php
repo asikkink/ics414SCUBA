@@ -88,43 +88,54 @@ function selectBottomTime($db, $POST){
 function addDive($db, $POST){
 	//references
 	$profileID = 1;
-	$diveNum = getDiveNum($db, $profileID);
 	$depth = $POST['depth_select'];
 	$time = $POST['bottom_time_select'];
 	$surfInt = $POST['surface_int_select'];
-	
-	//get current dive values
-	$initialPG = getInitialPG($db, $profileID, $diveNum-1);
-	
-	//in order to get an accurate pg, need to calculate the residual(from last dive) + time and send that to the getPostDivePG function
-	$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
-	$postDivePG = getPostDivePG($db, $depth, $time+$prevDiveResidual);
-	
-	
-	$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
-	
-	/**Include Residual Time
-	* Residual time is calculated as postSurfacePG + depth -> residual time and Total bottom time*/
-	//=========================
-	$residualTime = getResidualTime($db, $postSurfacePG, $depth);
-	$totalTime = $residualTime + $time;
-	//$time = $residualTime + $time;
-	//echo $residualTime;
-	//===========================
-	
-	
-	//insert values into table
-	$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
-	'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
+	$diveNum = $POST['diveNumber'];
+
+	if ($diveNum == 0) {
+		// NEW DIVE
+		$diveNum = getDiveNum($db, $profileID);
+		//get current dive values
+		$initialPG = getInitialPG($db, $profileID, $diveNum-1);
+		
+		//in order to get an accurate pg, need to calculate the residual(from last dive) + time and send that to the getPostDivePG function
+		$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
+		$postDivePG = getPostDivePG($db, $depth, $time+$prevDiveResidual);
+		
+		
+		$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
+		
+		/**Include Residual Time
+		* Residual time is calculated as postSurfacePG + depth -> residual time and Total bottom time*/
+		//=========================
+		$residualTime = getResidualTime($db, $postSurfacePG, $depth);
+		$totalTime = $residualTime + $time;
+		//$time = $residualTime + $time;
+		//echo $residualTime;
+		//===========================
+		
+		
+		//insert values into table
+		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
+		'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
+	}
+	else {
+		// EDIT EXISTING DIVE
+		$diveNum = $POST['diveNumber'];
+		$sql = "UPDATE `dives` SET `depth` = '$depth', `time` = '$time', `surf_int` = '$surfInt' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+	}
+
 	mysqli_query($db, $sql);
 	
-	$diveInfo = getDives($db, $profileID);
-
 	//echo "id: $profileID, diveNum: $diveNum, depth:$depth, time: $time, surfInt:$surfInt";
 	//echo "\tInitialPG: $initialPG, PostDivePG: $postDivePG, PostSurfIntPG: $postSurfacePG\n";
 	
+	// NEED TO CALL A FUNCTION TO UPDATE PRESSURE GROUPS HERE
+
+	$diveInfo = getDives($db, $diveNum, $profileID);
+
 	echo $diveInfo;
-	
 }
 
 /**Gets the LASTEST dive number
@@ -214,21 +225,23 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 }
 
 
-function getDives($db, $profileID) {
+function getDives($db, $diveNum, $profileID) {
 
-	$sql = "SELECT `depth`, `time` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
+	$sql = "SELECT `depth`, `time`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
-	if(mysqli_num_rows($result) == 0) return "broken";
-	else if(mysqli_num_rows($result)){
+	$numRows = mysqli_num_rows($result);
+	if($numRows == 0) return "broken";
+	else if($numRows){
 		$diveInfo = "";
-		for($i=1;$i<=mysqli_num_rows($result);$i++){
+		$checked = false;
+		for($i=1;$i<=$numRows;$i++){
 			$data = mysqli_fetch_assoc($result);
 			$diveInfo .= "<input type='radio' name='diveRadio' id='$i' value='$i'";
-			if ($i == mysqli_num_rows($result)) {
+			if (($data['dive_num'] == $diveNum || $i == $numRows) && !$checked) {
 				$diveInfo .= " checked";
+				$checked = true;
 			}
 			$diveInfo .= "> <strong>Dive $i:</strong> {$data['depth']} ft. for {$data['time']} min.<br>";
- 			
 		}
 		return $diveInfo;
 	}
@@ -237,7 +250,7 @@ function getDives($db, $profileID) {
 function showDive($db, $POST) {
 	$profileID = 1;
 	
-	$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
+	$sql = "SELECT `depth`, `time`, `surf_int`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
 
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) echo 0;
