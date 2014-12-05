@@ -191,7 +191,7 @@ function getPostDivePG($db, $depth, $time){
 	$sql = "SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '$depth' AND `time` >= '$time'";
 	error_log("getPostDivePG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) return "getPostDivePG broken";
 	else {
 		$pdpg = mysqli_fetch_assoc($result);
 		return $pdpg['pressure_group'];
@@ -209,7 +209,7 @@ function getResidualTime($db, $postSurfacePG, $depth){
 	error_log("getResidTime: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) return "getResidualTime broken";
 	else {
 		$residualRow = mysqli_fetch_assoc($result);
 		return $residualRow['residual_time'];
@@ -225,7 +225,7 @@ function getResidualInfo($db, $postSurfacePG, $depth){
 	error_log("getResidTime: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) return "getResidualInfo broken";
 	else {
 		$residualRow = mysqli_fetch_assoc($result);
 		return $residualRow;
@@ -241,7 +241,7 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `init_pressure_group` = '$postDivePG' AND `end_time` >= '$surfInt'";
 	error_log("getPostSurfaceIntPG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) return "getPostSurfaceIntPG broken";
 	else {
 		$psipg = mysqli_fetch_assoc($result);
 		return $psipg['final_pressure_group'];
@@ -255,7 +255,7 @@ function getDives($db, $diveNum, $profileID) {
 	$sql = "SELECT `depth`, `time`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	$numRows = mysqli_num_rows($result);
-	if($numRows == 0) return "broken";
+	if($numRows == 0) return "getDives broken";
 	else if($numRows){
 		$diveInfo = "";
 		$checked = false;
@@ -325,7 +325,7 @@ $sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AN
 		//take last dive num and grab post_surf_int_pg from results
 		$prevDive = mysqli_fetch_assoc($result);
 		$residual_time = $prevDive['residual_time'];
-		error_log($residual_time);
+		//error_log("Residual time: $residual_time");
 	}
 	return $residual_time;	
 }
@@ -343,7 +343,8 @@ function storeStops($db, $profileID, $diveNum, $ssDepth, $ssTime){
 function updateData($db, $profileID, $diveNum){
 
 	$last_diveNum = mysqli_query($db,'SELECT max(`dive_num`) FROM `dives`');
-	error_log($diveNum+"X"+$last_diveNum);
+	$last_diveNum = mysqli_fetch_assoc($last_diveNum);
+	error_log($diveNum."X".$last_diveNum);
 	
 	while($diveNum <= $last_diveNum){
 		$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
