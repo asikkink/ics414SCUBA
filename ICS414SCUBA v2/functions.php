@@ -99,27 +99,34 @@ function addDive($db, $POST){
 		// NEW DIVE
 		$diveNum = getDiveNum($db, $profileID);
 		//get current dive values
-		$initialPG = getInitialPG($db, $profileID, $diveNum-1);
+		//$initialPG = getInitialPG($db, $profileID, $diveNum-1);
 		
 		//in order to get an accurate pg, need to calculate the residual(from last dive) + time and send that to the getPostDivePG function
-		$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
-		$postDivePG = getPostDivePG($db, $depth, $time+$prevDiveResidual);
+		//$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
+		//$postDivePG = getPostDivePG($db, $depth, $time+$prevDiveResidual);
 		
 		
-		$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
+		//$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
 		
 		/**Include Residual Time
 		* Residual time is calculated as postSurfacePG + depth -> residual time and Total bottom time*/
 		//=========================
-		$residualTime = getResidualTime($db, $postSurfacePG, $depth);
-		$totalTime = $residualTime + $time;
+		//$residualTime = getResidualTime($db, $postSurfacePG, $depth);
+		//$totalTime = $residualTime + $time;
 		
 		
 		//insert values into table
-		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
-		'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
+		//$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
+		//'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
 		
-		storeStops($db, $profileID, $diveNum, $safetyDepth, $safetyTime);
+		//storeStops($db, $profileID, $diveNum, $safetyDepth, $safetyTime);
+		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', 'null', '$depth', 
+	'$time', 'null', '$surfInt', 'null', 'null') ";
+	error_log($sql);
+	mysqli_query($db, $sql);
+	
+	//update everything
+	updateData($db, $profileID, $diveNum);
 
 	}
 	else {
@@ -206,6 +213,22 @@ function getResidualTime($db, $postSurfacePG, $depth){
 	else {
 		$residualRow = mysqli_fetch_assoc($result);
 		return $residualRow['residual_time'];
+	}
+}
+
+/**
+*Get residual time and ABT. Pressure group -> Depth = Residual time and Acutal bottom time
+*/
+function getResidualInfo($db, $postSurfacePG, $depth){
+	if($postSurfacePG == null) return 0;
+	$sql = "SELECT `residual_time`, `actual_bottom_time` FROM `residual_time` WHERE `pressure_group` = '$postSurfacePG' and `depth` = '$depth'";
+	error_log("getResidTime: $sql");
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	
+	if(mysqli_num_rows($result) == 0) return "broken";
+	else {
+		$residualRow = mysqli_fetch_assoc($result);
+		return $residualRow;
 	}
 }
 
@@ -312,6 +335,48 @@ function storeStops($db, $profileID, $diveNum, $ssDepth, $ssTime){
 	$sql = "INSERT INTO `safety_stops` VALUES ('$profileID', '$diveNum', $ssDepth, $ssTime)";
 	mysqli_query($db, $sql);
 	
+}
+
+/**
+* Function that updates the database when a dive is added, edited, or removed.
+*/
+function updateData($db, $profileID, $diveNum){
+
+	$last_diveNum = mysqli_query($db,'SELECT max(`dive_num`) FROM `dives`');
+	error_log($diveNum+"X"+$last_diveNum);
+	
+	while($diveNum <= $last_diveNum){
+		$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+		$data = mysqli_query($db, $sql);
+		$data = mysqli_fetch_assoc($data);
+		
+	
+		//get current dive values
+		$initialPG = getInitialPG($db, $profileID, $diveNum-1);
+		
+		//in order to get an accurate pg, need to calculate the residual(from last dive) + time and send that to the getPostDivePG function
+		$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
+		$postDivePG = getPostDivePG($db, $data['depth'], $data['time']+$prevDiveResidual);
+		
+		$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $data['surf_int']);
+		
+
+		$residuals = getResidualInfo($db, $postSurfacePG, $data['depth']);
+		$totalTime = $residuals['residual_time'] + $data['time'];
+
+		
+		
+		//update values in table
+		$sql = "UPDATE `dives` SET `init_pg`='$initialPG',`post_dive_pg`='$postDivePG',`post_surf_int_pg`='$postSurfacePG',`residual_time`='{$residuals['residual_time']}' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+		error_log($sql);
+		mysqli_query($db, $sql);
+		$diveNum++;
+	}
+	
+
+	
+
+
 }
 
 
