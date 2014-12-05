@@ -63,7 +63,7 @@ function selectDepth($db, $POST){
 function selectBottomTime($db, $POST){
 	if(isset($_POST['bottom_time'])){
 		//set sql statement
-		$sql = "SELECT `end_time` from `surface_interval` WHERE `init_pressure_group` IN ( SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '{$POST['depth_selected']}' AND `time` = '{$POST['bottom_time']}') ORDER BY `end_time` ASC";
+		$sql = "SELECT `start_time`, `end_time` from `surface_interval` WHERE `init_pressure_group` IN ( SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '{$POST['depth_selected']}' AND `time` = '{$POST['bottom_time']}') ORDER BY `end_time` ASC";
 		//see if there is a result when we run the query
 		if(!$result = mysqli_query($db, $sql)){
 			//if no result, there was an error
@@ -74,7 +74,7 @@ function selectBottomTime($db, $POST){
 			$response = "";
 			for($i=0;$i<mysqli_num_rows($result);$i++){
 				$data = mysqli_fetch_assoc($result);
-				$response .= "<option value='{$data['end_time']}'>{$data['end_time']}</option>";
+				$response .= "<option value='{$data['end_time']}'>{$data['start_time']} - {$data['end_time']}</option>";
 			}
 			echo $response;
 		}
@@ -240,7 +240,7 @@ function showDive($db, $POST) {
 	$sql = "SELECT `depth`, `time`, `surf_int` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
 
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) echo 0;
 	else {
 		$test = mysqli_fetch_assoc($result);
 		//call select Depth to correct bottom time field

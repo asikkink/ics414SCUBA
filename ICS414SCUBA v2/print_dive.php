@@ -28,10 +28,10 @@ $(document).ready(
 	<div style="text-align: right; font-size: 12px"><a id="print" onClick="printProfile()"><span class="glyphicon glyphicon-print"></span> Print profile</div></a>
 		<h2> Final Dive Profile </h2>
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-md-9">
 			<div id="chart_div"></div>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<strong>Profile #:</strong> <?php echo $_POST["did"]; ?><br />
 			<strong>Date:</strong> <?php echo $_POST["dd"]; ?><br />
 			<strong>Dive Buddies:</strong> <?php echo $_POST["db"]; ?><br />
