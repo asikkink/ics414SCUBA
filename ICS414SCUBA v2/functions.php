@@ -199,7 +199,7 @@ function updateOthers($db, $prevRow, $data){
 	//Get residual time
 	$residualTime = getResidualTime($db, $initialPG, $depth);
 	$totalTime = $residualTime + $time;
-	$postDivePG = getPostDivePG($db, $depth, $time);
+	$postDivePG = getPostDivePG($db, $depth, $totalTime);
 	$postSurfIntPG = getPostSurfaceIntPG($db, $postDivePG, $surfaceInt);
 	
 	//Time to update this row
