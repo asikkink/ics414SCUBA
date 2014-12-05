@@ -143,7 +143,7 @@ function addDive($db, $POST){
 	echo $diveInfo;
 }
 /** Update Everything!
-============================================
+============================================ Start
 * What: goes through dives in database and updates pressure groups due to modified depths, times, and surface intervals
 * Why: could reduce code regarding calculation
 */
@@ -207,7 +207,7 @@ function updateOthers($db, $prevRow, $data){
 	if(!$result2 = mysqli_query($db, $updateSql)) return "MySQL error: ".mysqli_error($db);
 	
 }
-/**============================================================================
+/**============================================================================END
 */
 
 
