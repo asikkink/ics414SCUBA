@@ -92,6 +92,8 @@ function addDive($db, $POST){
 	$time = $POST['bottom_time_select'];
 	$surfInt = $POST['surface_int_select'];
 	$diveNum = $POST['diveNumber'];
+	$safetyDepth = $POST['safety_depth_select'];
+	$safetyTime = $POST['safety_time_select'];
 
 	if ($diveNum == 0) {
 		// NEW DIVE
@@ -111,14 +113,14 @@ function addDive($db, $POST){
 		//=========================
 		$residualTime = getResidualTime($db, $postSurfacePG, $depth);
 		$totalTime = $residualTime + $time;
-		//$time = $residualTime + $time;
-		//echo $residualTime;
-		//===========================
 		
 		
 		//insert values into table
 		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
 		'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
+		
+		storeStops($db, $profileID, $diveNum, $safetyDepth, $safetyTime);
+
 	}
 	else {
 		// EDIT EXISTING DIVE
@@ -269,7 +271,10 @@ function showDive($db, $POST) {
 function getDiveData($db){
 	$profileID = 1;
 	
-	$sql = "SELECT `dive_num`, `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg`, `residual_time` FROM `dives` WHERE `profile_id` = '$profileID'";
+	$sql = //"SELECT `dive_num`, `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg`, `residual_time` FROM `dives` WHERE `profile_id` = '$profileID'";
+	"SELECT d.dive_num AS dive_num, d.depth AS depth, d.time AS time, d.surf_int AS surf_int, d.post_dive_pg AS post_dive_pg, d.post_surf_int_pg AS post_surf_int_pg, d.residual_time AS residual_time, ss.ss_depth AS ss_depth, ss.ss_time AS ss_time
+	FROM `dives` AS d INNER JOIN `safety_stops` AS ss
+	WHERE d.profile_id = 1 AND d.profile_id = ss.profile_id AND d.dive_num = ss.dive_num";
 	
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) echo 0;
@@ -300,6 +305,13 @@ $sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AN
 		error_log($residual_time);
 	}
 	return $residual_time;	
+}
+//Store safety stops
+function storeStops($db, $profileID, $diveNum, $ssDepth, $ssTime){
+	
+	$sql = "INSERT INTO `safety_stops` VALUES ('$profileID', '$diveNum', $ssDepth, $ssTime)";
+	mysqli_query($db, $sql);
+	
 }
 
 
