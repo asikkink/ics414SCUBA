@@ -178,8 +178,24 @@ function () {
 			}
 		});
 	})
+
+	$("input[name='defSS']").change(
+		function() {
+			if (this.checked) {
+				$('#safety_depth_select option[value="15"]').attr("selected", "selected");
+				$('#safety_time_select option[value="3"]').attr("selected", "selected");
+				$('#safety_depth_select').prop("disabled", true);
+				$('#safety_time_select').prop("disabled", true);
+			}
+			else {
+				$('#safety_depth_select').prop("disabled", false);
+				$('#safety_time_select').prop("disabled", false);
+			}
+	})
 	
 })
+
+
 //Organized code... for that long nested ajax code
 //This one works
 function displayBottomTime(depth){
