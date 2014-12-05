@@ -84,6 +84,7 @@ function selectBottomTime($db, $POST){
 /**When submit button is pressed, manage add dive to dive table
 *  Test: echo's dive row back to client console
 *  Everything goes on here for testing
+*  VICTOR: Story time!
 */
 function addDive($db, $POST){
 	//references
@@ -94,31 +95,35 @@ function addDive($db, $POST){
 	$diveNum = $POST['diveNumber'];
 	$safetyDepth = $POST['safety_depth_select'];
 	$safetyTime = $POST['safety_time_select'];
-
+	
+	//Check if "New dive" was selected
 	if ($diveNum == 0) {
 		// NEW DIVE
+		//Lets check our previous dive... and add one
 		$diveNum = getDiveNum($db, $profileID);
-		//get current dive values
+		//Okay so the post surface interval pg of my previous dive will now be my current initial pg. 
 		$initialPG = getInitialPG($db, $profileID, $diveNum-1);
 		
 		//in order to get an accurate pg, need to calculate the residual(from last dive) + time and send that to the getPostDivePG function
-		$prevDiveResidual = getPrevDiveResidual($db, $profileID, $diveNum-1);
-		$postDivePG = getPostDivePG($db, $depth, $time+$prevDiveResidual);
+		//VICTOR: You can still calculate the residual time by getting the initial PG of current dive (which is also the postsurfpg of previous dive) with the next dive depth
+		//RESIDUAL NITROGEN IS AFFECTED BY CURRENT INITIAL GROUP and the change of depth. 
 		
-		
-		$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
-		
-		/**Include Residual Time
-		* Residual time is calculated as postSurfacePG + depth -> residual time and Total bottom time*/
-		//=========================
-		$residualTime = getResidualTime($db, $postSurfacePG, $depth);
+		//Get residual time
+		//I'm gonna have to be careful how deep im gonna go this time... My residual time will increase the deeper I go. Fortunately, I know my initial pg
+		$residualTime = getResidualTime($db, $initialPG, $depth);
 		$totalTime = $residualTime + $time;
 		
+		//After diving with RTN, you come up with a new post dive pressure group
+		$postDivePG = getPostDivePG($db, $depth, $totalTime);
+		
+		//Chillin out on the boat while your postDivePG calms down. Now you have a new one!
+		$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);	
 		
 		//insert values into table
 		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
 		'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
 		
+		//Wait... what is the point of this? Oh wells, yolo!
 		storeStops($db, $profileID, $diveNum, $safetyDepth, $safetyTime);
 
 	}
@@ -127,18 +132,84 @@ function addDive($db, $POST){
 		$diveNum = $POST['diveNumber'];
 		$sql = "UPDATE `dives` SET `depth` = '$depth', `time` = '$time', `surf_int` = '$surfInt' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
 	}
-
+	//Adds or updates dive
 	mysqli_query($db, $sql);
 	
-	//echo "id: $profileID, diveNum: $diveNum, depth:$depth, time: $time, surfInt:$surfInt";
-	//echo "\tInitialPG: $initialPG, PostDivePG: $postDivePG, PostSurfIntPG: $postSurfacePG\n";
-	
 	// NEED TO CALL A FUNCTION TO UPDATE PRESSURE GROUPS HERE
+	updateDatabase($db, $profileID);
 
 	$diveInfo = getDives($db, $diveNum, $profileID);
 
 	echo $diveInfo;
 }
+/** Update Everything!
+============================================
+* What: goes through dives in database and updates pressure groups due to modified depths, times, and surface intervals
+* Why: could reduce code regarding calculation
+*/
+function updateDatabase($db, $profileID){
+	//Select every single row
+	$sql = "SELECT * FROM `dives` WHERE `profile_id` = '$profileID'";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	$num_dives = mysqli_num_rows($result);
+	if($num_dives == 0) return;
+	$prevDive = 0;
+	
+	for($i=1;$i<=$num_dives;$i++){
+		//If first row
+		if($i == 1){
+			$data = mysqli_fetch_assoc($result);
+			//Get important values: dive_num, initialpg, depth, time, surface int
+			$diveNum = $data['dive_num'];
+			$depth = $data['depth'];
+			$time = $data['time'];
+			$surfInt = $data['surf_int'];
+			//get postDivePG. Time has no residual effect due to this being the first dive
+			$postDivePG = getPostDivePG($db, $depth, $time);
+			$postSurfPG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
+			//Begin to update database row
+			$updateSql = "UPDATE `dives` SET `post_dive_pg` = '$postDivePG', `post_surf_int_pg` = '$postSurfPG' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+			if(!$result2 = mysqli_query($db, $updateSql)) return "MySQL error: ".mysqli_error($db);
+			
+		}else{//Every row
+			$data = mysqli_fetch_assoc($result);
+			updateOthers($db, $prevDive, $data);
+
+		}
+		$prevDive++;
+	}
+	
+}
+
+//updates rows greater than the first. used in updateDatabase else statement
+//requires $prevRow to get previous postSurfIntPG to put into current initialPG 
+function updateOthers($db, $prevRow, $data){
+	$profileID = $data['profile_id'];
+	$diveNum = $data['dive_num'];
+	$depth = $data['depth'];
+	$time = $data['time'];
+	$surfaceInt = $data['surf_int'];
+	
+	//get initial pgroup
+	$sql = "SELECT `post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevRow'";
+	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	$initialResult = mysqli_fetch_assoc($result);
+	$initialPG = $initialResult['post_surf_int_pg'];
+	
+	//Get residual time
+	$residualTime = getResidualTime($db, $initialPG, $depth);
+	$totalTime = $residualTime + $time;
+	$postDivePG = getPostDivePG($db, $depth, $time);
+	$postSurfIntPG = getPostSurfaceIntPG($db, $postDivePG, $surfaceInt);
+	
+	//Time to update this row
+	$updateSql = "UPDATE `dives` SET `init_pg`= '$initialPG', `post_dive_pg` = '$postDivePG', `post_surf_int_pg` = '$postSurfIntPG' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+	if(!$result2 = mysqli_query($db, $updateSql)) return "MySQL error: ".mysqli_error($db);
+	
+}
+/**============================================================================
+*/
+
 
 /**Gets the LASTEST dive number
 *  Used: AddDive will insert the next incremented dive number to dives
@@ -195,14 +266,15 @@ function getPostDivePG($db, $depth, $time){
 /**Get residual time. Pressure group -> Depth = Residual time
 *  Used: getPostDivePG will need to add residual time to $time to get total time.
 * EDIT: Residual time is calculated with the PG after the surface interval...
+* EDIT2: The initial pressure group IS the PG after the surface interval (of the previous dive)
 */
-function getResidualTime($db, $postSurfacePG, $depth){
-	if($postSurfacePG == null) return 0;
-	$sql = "SELECT `residual_time` FROM `residual_time` WHERE `pressure_group` = '$postSurfacePG' and `depth` = '$depth'";
+function getResidualTime($db, $initialPG, $depth){
+	if($initialPG == null) return 0;
+	$sql = "SELECT `residual_time` FROM `residual_time` WHERE `pressure_group` = '$initialPG' and `depth` = '$depth'";
 	error_log("getResidTime: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	
-	if(mysqli_num_rows($result) == 0) return "broken";
+	if(mysqli_num_rows($result) == 0) return 0;
 	else {
 		$residualRow = mysqli_fetch_assoc($result);
 		return $residualRow['residual_time'];
@@ -226,7 +298,7 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
 }
 
-
+//Displays on the Planned dives column
 function getDives($db, $diveNum, $profileID) {
 
 	$sql = "SELECT `depth`, `time`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
@@ -260,7 +332,6 @@ function showDive($db, $POST) {
 		$test = mysqli_fetch_assoc($result);
 		//call select Depth to correct bottom time field
 		
-		
 		echo json_encode($test);
 	}
 	closeDB($db);
@@ -292,7 +363,7 @@ function closeDB($db){
 }
 
 function getPrevDiveResidual($db, $profileID, $prevDiveNum){
-$sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
+	$sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
 	error_log("getPrev: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	//if empty table returned, there is no dive yet
