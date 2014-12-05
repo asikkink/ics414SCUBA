@@ -132,8 +132,10 @@ function () {
 								//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
 								$('#depth_select option:selected').attr("selected",null);
 								$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
+								$('#bottom_time_select').prop("disabled", false);
 								$('#bottom_time_select option:selected').attr("selected", null);
 								$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
+								$('#surface_int_select').prop("disabled", false);
 								$('#surface_int_select option:selected').attr("selected", null);
 								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
 								$('#diveNumber').val(result['dive_num']);
