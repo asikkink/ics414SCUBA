@@ -43,15 +43,24 @@ success: function(results){
 				['Rest '+ diveNum, 0, 0, surfInt +" min", "<b>Pressure Group<br> after Surface Interval:</b> "+ postSurfIntPG+"<br><b>Residual Nitrogen Time: </b>"+residual_time], //surface
 				]);
 				var barchart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-				var options = {series: [{ type: 'bars' },
-					{ type: 'line', lineWidth: 0, visibleInLegend:false, pointSize: 0}],
-					vAxis: {title: 'Depth of Dive',
-					direction: -1
+				var options = {
+					series: [{ type: 'bars' },
+						{ type: 'line', lineWidth: 0, visibleInLegend:false, pointSize: 0}],
+					vAxis: {
+						title: 'Depth of Dive',
+						direction: -1
 					},
-					bar: {groupWidth: '100%'},
+					bar: {
+						groupWidth: '100%',
+						strokeWidth: '1'
+						
+						},
 					tooltip: {isHtml: true},
-					//colors: ['a color'],
-					backgroundColor: '#E4E4E4'
+					//colors: ['blue', 'orange'],
+					backgroundColor: '#E4E4E4',
+					chartArea: {
+						backgroundColor: 'white'
+					}
 				};
 
 				barchart.draw(data, options);
