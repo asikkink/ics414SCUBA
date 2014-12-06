@@ -61,9 +61,11 @@ function selectDepth($db, $POST){
 *  Field affected: Surface Interval (minutes)
 */
 function selectBottomTime($db, $POST){
+	
 	if(isset($_POST['bottom_time'])){
 		//set sql statement
 		$sql = "SELECT `start_time`, `end_time` from `surface_interval` WHERE `init_pressure_group` IN ( SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '{$POST['depth_selected']}' AND `time` = '{$POST['bottom_time']}') ORDER BY `end_time` ASC";
+
 		//see if there is a result when we run the query
 		if(!$result = mysqli_query($db, $sql)){
 			//if no result, there was an error
@@ -233,7 +235,7 @@ function getDiveNum($db, $profileID){
 function getInitialPG($db, $profileID, $prevDiveNum){
 	//if no previous dives, initialize first one
 	$sql = "SELECT `post_surf_int_pg` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
-	error_log("getInitPG: $sql");
+	//error_log("getInitPG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	//if empty table returned, there is no dive yet
 	if(mysqli_num_rows($result) == 0) $init_pressure_group = null; 
@@ -253,7 +255,7 @@ function getInitialPG($db, $profileID, $prevDiveNum){
 function getPostDivePG($db, $depth, $time){
 
 	$sql = "SELECT `pressure_group` FROM `bottom_time` WHERE `depth` = '$depth' AND `time` >= '$time'";
-	error_log("getPostDivePG: $sql");
+	//error_log("getPostDivePG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
@@ -271,7 +273,7 @@ function getPostDivePG($db, $depth, $time){
 function getResidualTime($db, $initialPG, $depth){
 	if($initialPG == null) return 0;
 	$sql = "SELECT `residual_time` FROM `residual_time` WHERE `pressure_group` = '$initialPG' and `depth` = '$depth'";
-	error_log("getResidTime: $sql");
+	//error_log("getResidTime: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	
 	if(mysqli_num_rows($result) == 0) return 0;
@@ -288,7 +290,7 @@ function getResidualTime($db, $initialPG, $depth){
 function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
 	$sql = "SELECT `final_pressure_group` FROM `surface_interval` WHERE `init_pressure_group` = '$postDivePG' AND `end_time` >= '$surfInt'";
-	error_log("getPostSurfaceIntPG: $sql");
+	//error_log("getPostSurfaceIntPG: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) return "broken";
 	else {
@@ -364,7 +366,7 @@ function closeDB($db){
 
 function getPrevDiveResidual($db, $profileID, $prevDiveNum){
 	$sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
-	error_log("getPrev: $sql");
+	//error_log("getPrev: $sql");
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	//if empty table returned, there is no dive yet
 	if(mysqli_num_rows($result) == 0) $residual_time = 0; 
@@ -373,7 +375,7 @@ function getPrevDiveResidual($db, $profileID, $prevDiveNum){
 		//take last dive num and grab post_surf_int_pg from results
 		$prevDive = mysqli_fetch_assoc($result);
 		$residual_time = $prevDive['residual_time'];
-		error_log($residual_time);
+		//error_log($residual_time);
 	}
 	return $residual_time;	
 }

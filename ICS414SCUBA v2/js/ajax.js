@@ -127,6 +127,9 @@ function () {
 								*/
 								value = result['depth'];
 								displayBottomTime(value);
+								//Anna added this to reload the surface interval field
+								var time = result['time'];
+								displaySurfInt(value, time);
 								//================================================
 								
 								//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
@@ -210,6 +213,24 @@ async: false,
 		success : function (result) {
 			//console.log(result);
 			$('#bottom_time_select').html(result);
+
+		}
+	});
+}
+
+//similar to displayBottomTime, but for Surface Interval
+function displaySurfInt(depth, bottom_time){
+$.ajax({
+		type : 'POST',
+		url : 'ajax_handler.php',
+		data : {
+			action : 'select_bottom_time',
+			depth_selected: depth,
+			bottom_time : bottom_time
+		},
+async: false,
+		success : function (result) {
+			$('#surface_int_select').html(result);
 
 		}
 	});
