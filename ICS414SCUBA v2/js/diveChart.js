@@ -41,7 +41,7 @@ success: function(results){
 				data.addRows([
 				['Dive '+ diveNum , depth, depth, time +" min", "<b>Pressure Group <br>after Dive:</b> "+ postDivePG], //dive 1
 				['Rest '+ diveNum, 0, 0, surfInt +" min", "<b>Pressure Group<br> after Surface Interval:</b> "+ postSurfIntPG+"<br><b>RNT: </b>"+residual_time+
-				"<br><b>Safety Stop: <br>" + myJson[i].ss_depth + " ft. for "+ myJson[i].ss_time + " min  </b>"], //surface
+				"<br><b>Safety Stop: </b><br>" + myJson[i].ss_depth + " ft. for "+ myJson[i].ss_time + " min"], //surface
 				]);
 				var barchart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 				var options = {
