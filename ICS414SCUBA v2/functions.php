@@ -47,7 +47,7 @@ function selectDepth($db, $POST){
 		}
 		//if there is no mysql error, see if any rows were returned from the query
 		else if(mysqli_num_rows($result)){
-			$response = "";
+			$response = "<option value='' selected disabled>Choose...</option>";
 			for($i=0;$i<mysqli_num_rows($result);$i++){
 				$data = mysqli_fetch_assoc($result);
 				$response .= "<option value='{$data['time']}'>{$data['time']}</option>";
@@ -71,7 +71,7 @@ function selectBottomTime($db, $POST){
 		}
 		//if there is no mysql error, see if any rows were returned from the query
 		else if(mysqli_num_rows($result)){
-			$response = "";
+			$response = "<option value='' selected disabled>Choose...</option>";
 			for($i=0;$i<mysqli_num_rows($result);$i++){
 				$data = mysqli_fetch_assoc($result);
 				$response .= "<option value='{$data['end_time']}'>{$data['start_time']} - {$data['end_time']}</option>";
