@@ -34,7 +34,8 @@ $(document).ready(
 	// GLOBAL VARIABLE: profile ID
 	//==========!!!!!!!!!!!!!!
 	profileID = $.getId();
-	//profileID = 1;
+	//Set pid value
+	$('#pid').val(profileID);
 	drawChart(profileID);
 	
 	//ajax function for depth selection to update bottom time field options
