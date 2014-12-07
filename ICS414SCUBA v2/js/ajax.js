@@ -21,7 +21,10 @@ $(document).ready(
 					id = result['pid'];
 					$('#bottom_time_select').prop("disabled", true);
 					$('#surface_int_select').prop("disabled", true);
+					$('#safety_time_select').prop("disabled", true);
+					$('#safety_time_select').prop("disabled", true);
 					$('#addDive').prop("disabled", true);
+					$('#finish').prop("disabled", true);
 				},
 				error : function (result) {
 					console.log("failed");
@@ -125,6 +128,7 @@ $(document).ready(
 					
 					$('#dives').html(data);
 					$('#addDive').text('Save Dive');
+					$('#finish').prop("disabled", false);
 					$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
 	//=====!!!!!!!!!Draw chart
 					drawChart(profileID);
@@ -204,6 +208,9 @@ $(document).ready(
 		function() {
 			if (this.checked) {
 				$('#safety_depth_select').val(15);
+				if ($('#safety_time_select').is(':disabled')) {
+					$('#safety_time_select').prop("disabled", false);
+				}
 				$('#safety_time_select').val(3);
 				
 				$('#safety_depth_select').change(
@@ -217,6 +224,16 @@ $(document).ready(
 						$("input[name='defSS']").prop("checked", false);
 					}
 				)
+			}
+	})
+
+	$('#safety_depth_select').change(
+		function(){
+			if ($(this).val() == 0) {
+				$('#safety_time_select').prop("disabled", true);
+			}
+			else {
+				$('#safety_time_select').prop("disabled", false);
 			}
 	})
 	

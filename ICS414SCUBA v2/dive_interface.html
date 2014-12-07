@@ -26,7 +26,7 @@
 			<div class="col-md-3"><h3>Planned Dives</h3>
 				<div id="dives">
 				</div>
-				<button type="button" id="newDive" class="btn btn-default btn-md">New Dive</button>
+				<button type="button" id="newDive" class="btn btn-info btn-md">New Dive</button>
 			</div>
 			<div class="col-md-5"><h3>Dive Planner</h3>
 				<form id="addDiveForm" name="addDiveForm" class="form-horizontal" role="form">
@@ -53,10 +53,10 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-4 control-label" style="padding-right:0px">Safety Stop at:</label>
-						<div class="col-sm-2" style="padding: 0 10px 0 0">
+						<label class="col-sm-3 control-label" style="padding-right:5px">Safety Stop at:</label>
+						<div class="col-sm-3" style="padding: 0 10px 0 5px">
 							<select name="safety_depth_select" id="safety_depth_select" class="form-control">
-								<option>0</option>
+								<option value="0">None</option>
 								<option>15</option>
 								<option>20</option>
 								<option>25</option>
@@ -109,7 +109,7 @@
 							<input type="hidden" name="pid" id="pid" value="1" >
 						</div>
 					</div>
-					<button type="submit" class="btn btn-default btn-lg" style="float:right">Finish</button>
+					<button type="submit" id="finish" class="btn btn-default btn-lg" style="float:right">Finish</button>
 				</form>
 			</div>
 		</div>
