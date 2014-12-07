@@ -5,9 +5,34 @@
 //set the initial values for the max depth field
 function initialize($db,$POST){
 	if(isset($POST['init'])){
+		ob_start();
 		refreshVals($db);
-		//send error
-	}else echo "No rows returned by database.";
+		$depth_html = ob_get_clean();
+
+		//latest profile ID
+		$sql = "SELECT `profile_id` FROM `dives` ORDER BY `profile_id` DESC LIMIT 1";
+
+		if(!$result = mysqli_query($db, $sql)){
+			//if no result, there was an error
+			echo "MySQL error:".mysqli_error();
+		}
+		//if there is no mysql error, see if any rows were returned from the query
+		else if(mysqli_num_rows($result) == 0){
+			// no previous profiles ids
+			$pid = 1;
+		}
+		else {
+			// most recent profile id
+			$profid = mysqli_fetch_assoc($result);
+			$pid = $profid['profile_id'] + 1;
+		}
+
+		$data['html'] = $depth_html;
+		$data['pid'] = $pid;
+		echo json_encode($data, true);
+
+	//send error
+	} else echo "No rows returned by database.";
 }
 
 function refreshVals($db) {
@@ -90,7 +115,7 @@ function selectBottomTime($db, $POST){
 */
 function addDive($db, $POST){
 	//references
-	$profileID = 1;
+	$profileID = $POST['pid'];
 	$depth = $POST['depth_select'];
 	$time = $POST['bottom_time_select'];
 	$surfInt = $POST['surface_int_select'];
@@ -324,9 +349,9 @@ function getDives($db, $diveNum, $profileID) {
 }
 
 function showDive($db, $POST) {
-	$profileID = 1;
+	//$profileID = 1;
 	
-	$sql = "SELECT `depth`, `time`, `surf_int`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '{$POST['diveNum']}'";
+	$sql = "SELECT `depth`, `time`, `surf_int`, `dive_num` FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' AND `dive_num` = '{$POST['diveNum']}'";
 
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) echo 0;
@@ -341,13 +366,13 @@ function showDive($db, $POST) {
 }
 
 //Get dive data
-function getDiveData($db){
-	$profileID = 1;
+function getDiveData($db, $POST){
+	$profileID = $POST['profileID'];
 	
 	$sql = //"SELECT `dive_num`, `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg`, `residual_time` FROM `dives` WHERE `profile_id` = '$profileID'";
 	"SELECT d.dive_num AS dive_num, d.depth AS depth, d.time AS time, d.surf_int AS surf_int, d.post_dive_pg AS post_dive_pg, d.post_surf_int_pg AS post_surf_int_pg, d.residual_time AS residual_time, ss.ss_depth AS ss_depth, ss.ss_time AS ss_time
 	FROM `dives` AS d INNER JOIN `safety_stops` AS ss
-	WHERE d.profile_id = 1 AND d.profile_id = ss.profile_id AND d.dive_num = ss.dive_num";
+	WHERE d.profile_id = '$profileID' AND d.profile_id = ss.profile_id AND d.dive_num = ss.dive_num";
 	
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	if(mysqli_num_rows($result) == 0) echo 0;

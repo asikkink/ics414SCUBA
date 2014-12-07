@@ -1,28 +1,42 @@
 $(document).ready(
-function () {
-
-	//ajax called at dom initialization to update depth field with options
-	$.ajax({
-		type : 'POST',
-		url : 'ajax_handler.php',
-		data : {
-			action : "initialize",
-			init : 'true'
-		},
-		success : function (result) {
-			//console.log(result);
-			$('#depth_select').html(result);
-				$('#bottom_time_select').prop("disabled", true);
-				$('#surface_int_select').prop("disabled", true);
+	function () {
+	
+	jQuery.extend({
+		getId: function() {
+			var id = null;
+			//ajax called at dom initialization to update depth field with options
+			$.ajax({
+				type : 'POST',
+				url : 'ajax_handler.php',
+				data : {
+					action : "initialize",
+					init : 'true'
+				},
+				async : false,  //need to be careful with this
+				dataType : "json",
+				success : function (result) {
+					$('#depth_select').html(result['html']);
+					id = result['pid'];
+					$('#bottom_time_select').prop("disabled", true);
+					$('#surface_int_select').prop("disabled", true);
+					$('#addDive').prop("disabled", true);
+				},
+				error : function (result) {
+					console.log("failed");
+				}
+			});
+			return id;
 		}
 	});
+
+	// GLOBAL VARIABLE: profile ID
+	var profileID = $.getId();
 
 	
 	//ajax function for depth selection to update bottom time field options
 	$('#depth_select').change(
 	function () {
 		value = $('#depth_select').val();
-		//alert(value);
 		$.ajax({
 			type : 'POST',
 			url : 'ajax_handler.php',
@@ -33,8 +47,7 @@ function () {
 			success : function (result) {
 				//console.log(result);
 				$('#bottom_time_select').html(result);
-				$('#bottom_time_select').prop("disabled", false); 
-
+				$('#bottom_time_select').prop("disabled", false);
 			}
 		});
 	})
@@ -57,11 +70,17 @@ function () {
 				//console.log(result);
 				$('#surface_int_select').html(result);
 				$('#surface_int_select').prop("disabled", false);
-
 			}
 		});
 
 	})
+
+
+	$('#surface_int_select').change(
+		function() {
+			$('#addDive').prop("disabled", false);
+	})
+
 	//ajax function for AddDive selection to update graph and final calculations
 	$('#addDiveForm').on('submit',
 	function (e) {
@@ -85,13 +104,12 @@ function () {
 				}
 			});
 			
-			
 		}
 		else{
 			
-			var formValues = "action=addingDive&" + $('#addDiveForm').serialize();
+			var formValues = "action=addingDive&" + $('#addDiveForm').serialize() + "&pid=" + profileID;
 			//console.log(formValues);
-			//alert(formValues);
+			alert(formValues);
 			$.ajax({
 				type : "POST",
 				url : "ajax_handler.php",
@@ -116,7 +134,8 @@ function () {
 							url : 'ajax_handler.php',
 							data : {
 								action : 'select_dive_to_edit',
-								diveNum : value
+								diveNum : value,
+								profileID : profileID
 							},
 							dataType: "json",
 							success : function (result) {
@@ -135,22 +154,16 @@ function () {
 								//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
 								$('#depth_select option:selected').attr("selected",null);
 								$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
-								$('#bottom_time_select').prop("disabled", false);
 								$('#bottom_time_select option:selected').attr("selected", null);
 								$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
-								$('#surface_int_select').prop("disabled", false);
 								$('#surface_int_select option:selected').attr("selected", null);
 								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
 								$('#diveNumber').val(result['dive_num']);
 
 								$('#addDive').text('Save Dive');
 							}
-
 						});
-					}
-					);
-					
-					
+					});					
 				},
 				error : function () {
 					console.log("failed");
@@ -169,7 +182,6 @@ function () {
 				action : "refresh",
 			},
 			success : function (result) {
-				//console.log(result);
 				$('#depth_select').html(result);
 				$('#bottom_time_select').empty();
 				$('#bottom_time_select').prop("disabled", true);
@@ -177,6 +189,7 @@ function () {
 				$('#surface_int_select').prop("disabled", true);
 				$('#diveNumber').val(0);
 
+				$('#addDive').prop("disabled", true);
 				$('#addDive').text('Add Dive');
 			}
 		});
@@ -185,14 +198,20 @@ function () {
 	$("input[name='defSS']").change(
 		function() {
 			if (this.checked) {
-				$('#safety_depth_select option[value="15"]').attr("selected", "selected");
-				$('#safety_time_select option[value="3"]').attr("selected", "selected");
-				$('#safety_depth_select').prop("disabled", true);
-				$('#safety_time_select').prop("disabled", true);
-			}
-			else {
-				$('#safety_depth_select').prop("disabled", false);
-				$('#safety_time_select').prop("disabled", false);
+				$('#safety_depth_select').val(15);
+				$('#safety_time_select').val(3);
+				
+				$('#safety_depth_select').change(
+					function() {
+						$("input[name='defSS']").prop("checked", false);
+					}
+				)
+
+				$('#safety_time_select').change(
+					function() {
+						$("input[name='defSS']").prop("checked", false);
+					}
+				)
 			}
 	})
 	
@@ -209,7 +228,7 @@ function displayBottomTime(depth){
 			action : 'select_max_depth',
 			depth : value
 		},
-async: false,
+		async: false,
 		success : function (result) {
 			//console.log(result);
 			$('#bottom_time_select').html(result);
@@ -228,12 +247,9 @@ $.ajax({
 			depth_selected: depth,
 			bottom_time : bottom_time
 		},
-async: false,
+		async: false,
 		success : function (result) {
 			$('#surface_int_select').html(result);
-
 		}
 	});
 }
-
-
