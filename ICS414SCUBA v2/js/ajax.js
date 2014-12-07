@@ -32,8 +32,9 @@ $(document).ready(
 	});
 
 	// GLOBAL VARIABLE: profile ID
+	//==========!!!!!!!!!!!!!!
 	profileID = $.getId();
-	profileID = 1;
+	//profileID = 1;
 	drawChart(profileID);
 	
 	//ajax function for depth selection to update bottom time field options
@@ -112,7 +113,7 @@ $(document).ready(
 			
 			var formValues = "action=addingDive&" + $('#addDiveForm').serialize() + "&pid=" + profileID;
 			//console.log(formValues);
-			alert(formValues);
+			//alert(formValues);
 			$.ajax({
 				type : "POST",
 				url : "ajax_handler.php",

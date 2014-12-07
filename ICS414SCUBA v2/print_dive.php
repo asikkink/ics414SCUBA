@@ -17,7 +17,8 @@ function printProfile() {
 
 $(document).ready(
 	function () {
-		drawChart();
+		var pid = <?php echo $_POST["pid"] ?>;
+		drawChart(pid);
 })
 </script>
 </head>
