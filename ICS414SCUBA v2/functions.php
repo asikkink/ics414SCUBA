@@ -121,7 +121,12 @@ function addDive($db, $POST){
 	$surfInt = $POST['surface_int_select'];
 	$diveNum = $POST['diveNumber'];
 	$safetyDepth = $POST['safety_depth_select'];
-	$safetyTime = $POST['safety_time_select'];
+	if ($safetyDepth != 0) {
+		$safetyTime = $POST['safety_time_select'];
+	}
+	else {
+		$safetyTime = 0;
+	}
 	
 	//Check if "New dive" was selected
 	if ($diveNum == 0) {

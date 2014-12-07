@@ -38,11 +38,19 @@ success: function(results){
 				postDivePG = myJson[i].post_dive_pg;
 				postSurfIntPG = myJson[i].post_surf_int_pg;
 				residual_time = myJson[i].residual_time;
+
+				if (myJson[i].ss_depth == 0) {
+					safetyStop = "None";
+				}
+				else {
+					safetyStop = myJson[i].ss_depth + " ft. for "+ myJson[i].ss_time + " min";
+				}
+				
 				//Add dive row
 				data.addRows([
 				['Dive '+ diveNum , depth, depth, time +" min", "<b>Pressure Group <br>after Dive:</b> "+ postDivePG], //dive 1
 				['Rest '+ diveNum, 0, 0, surfInt +" min", "<b>Pressure Group<br> after Surface Interval:</b> "+ postSurfIntPG+"<br><b>RNT: </b>"+residual_time+
-				"<br><b>Safety Stop: </b><br>" + myJson[i].ss_depth + " ft. for "+ myJson[i].ss_time + " min"], //surface
+				"<br><b>Safety Stop: </b><br>" + safetyStop], //surface
 				]);
 				var barchart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 				var options = {
