@@ -367,6 +367,9 @@ function showDive($db, $POST) {
 
 //Get dive data
 function getDiveData($db, $POST){
+	if(!isset($POST['profileID'])){
+		echo 0;
+	}
 	$profileID = $POST['profileID'];
 	
 	$sql = //"SELECT `dive_num`, `depth`, `time`, `surf_int`, `post_dive_pg`, `post_surf_int_pg`, `residual_time` FROM `dives` WHERE `profile_id` = '$profileID'";
