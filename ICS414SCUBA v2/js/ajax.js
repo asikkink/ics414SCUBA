@@ -22,8 +22,8 @@ $(document).ready(
 					$('#bottom_time_select').prop("disabled", true);
 					$('#surface_int_select').prop("disabled", true);
 					$('#safety_time_select').prop("disabled", true);
-					$('#safety_time_select').prop("disabled", true);
 					$('#addDive').prop("disabled", true);
+					$('#deleteDive').hide();
 					$('#finish').prop("disabled", true);
 				},
 				error : function (result) {
@@ -128,8 +128,12 @@ $(document).ready(
 					
 					$('#dives').html(data);
 					$('#addDive').text('Save Dive');
+					$('#deleteDive').show();
 					$('#finish').prop("disabled", false);
 					$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
+
+					var latestDiveNum = $('#diveNumber').val();
+
 	//=====!!!!!!!!!Draw chart
 					drawChart(profileID);
 					$('input:radio[name=diveRadio]').change(
@@ -169,6 +173,13 @@ $(document).ready(
 								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
 								$('#diveNumber').val(result['dive_num']);
 
+								if ($('#diveNumber').val() == latestDiveNum) {
+									$('#deleteDive').show();
+								}
+								else {
+									$('#deleteDive').hide();
+								}
+
 								$('#addDive').text('Save Dive');
 							}
 						});
@@ -196,8 +207,12 @@ $(document).ready(
 				$('#bottom_time_select').prop("disabled", true);
 				$('#surface_int_select').empty();
 				$('#surface_int_select').prop("disabled", true);
+				$('#safety_depth_select').find('option:first').prop('selected', 'selected');
+				$('#safety_time_select').prop("disabled", true);
+				$("input[name='defSS']").prop("checked", false);
 				$('#diveNumber').val(0);
 
+				$('#deleteDive').hide();
 				$('#addDive').prop("disabled", true);
 				$('#addDive').text('Add Dive');
 			}
@@ -236,6 +251,137 @@ $(document).ready(
 				$('#safety_time_select').prop("disabled", false);
 			}
 	})
+
+
+	$('#delete').click(
+		function(){
+			$('#deleteModal').hide();
+			var dn = $('#diveNumber').val();
+
+			$.ajax({
+				type : 'POST',
+				url : 'ajax_handler.php',
+				data : {
+					action : 'delete_lastest_dive',
+					diveNum : dn, // need this to get remaining dives after delete
+					profileID : profileID
+				},
+				dataType : "json",
+				success : function (data) {
+					// if data is "", then it means there are no more dives
+
+					if (data != "") {
+						$('#dives').html(data);
+						$('#addDive').text('Save Dive');
+						$('#deleteDive').show();
+						$('#finish').prop("disabled", false);
+						$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
+
+						var latestDiveNum = $('#diveNumber').val();
+						updateDD(latestDiveNum);
+
+		//=====!!!!!!!!!Draw chart
+						drawChart(profileID);
+						$('input:radio[name=diveRadio]').change(
+							function(){
+							//variable for depth to call getDepth
+								var resultArray;
+								
+								value = $('input:radio[name=diveRadio]:checked').val();
+								$.ajax({
+									type : 'POST',
+									url : 'ajax_handler.php',
+									data : {
+										action : 'select_dive_to_edit',
+										diveNum : value,
+										profileID : profileID
+									},
+									dataType: "json",
+									success : function (result) {
+										//will use the ['depth'] 
+										/*Ugly ajax code again
+										*===============================================
+										* Reloads the Bottom Time Field so the correct options are displayed
+										*/
+										value = result['depth'];
+										displayBottomTime(value);
+										//Anna added this to reload the surface interval field
+										var time = result['time'];
+										displaySurfInt(value, time);
+										//================================================
+										
+										//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
+										$('#depth_select option:selected').attr("selected",null);
+										$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
+										$('#bottom_time_select option:selected').attr("selected", null);
+										$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
+										$('#surface_int_select option:selected').attr("selected", null);
+										$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
+										$('#diveNumber').val(result['dive_num']);
+
+										if ($('#diveNumber').val() == latestDiveNum) {
+											$('#deleteDive').show();
+										}
+										else {
+											$('#deleteDive').hide();
+										}
+
+										$('#addDive').text('Save Dive');
+									}
+								});
+						})
+					}
+					else {
+						$.ajax({
+							type : 'POST',
+							url : 'ajax_handler.php',
+							data : {
+								action : "refresh",
+							},
+							success : function (result) {
+								$('#dives').html(data);
+								$('#depth_select').html(result);
+								$('#bottom_time_select').empty();
+								$('#bottom_time_select').prop("disabled", true);
+								$('#surface_int_select').empty();
+								$('#surface_int_select').prop("disabled", true);
+								$('#safety_time_select').prop("disabled", true);
+								$("input[name='defSS']").prop("checked", false);
+								$('#diveNumber').val(0);
+
+								$('#deleteDive').hide();
+								$('#addDive').prop("disabled", true);
+								$('#addDive').text('Add Dive');
+							}
+						});
+					}
+				}
+			});
+	})
+
+	function updateDD(diveNum) {
+		$.ajax({
+			type : 'POST',
+			url : 'ajax_handler.php',
+			data : {
+				action : 'select_dive_to_edit',
+				diveNum : diveNum,
+				profileID : profileID
+			},
+			dataType : "json",
+			success : function(result) {
+				$('#depth_select option:selected').attr("selected",null);
+				$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
+				$('#bottom_time_select option:selected').attr("selected", null);
+				$('#bottom_time_select option[value=' + result['time'] + ']').attr("selected", "selected");
+				$('#surface_int_select option:selected').attr("selected", null);
+				$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
+				$('#diveNumber').val(result['dive_num']);
+
+				$('#deleteDive').show();
+			}
+		});
+	}
 	
 })
 

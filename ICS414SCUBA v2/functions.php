@@ -330,13 +330,19 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
 }
 
+function deleteDive($db, $POST) {
+	$sql = "DELETE FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' ORDER BY `dive_num` DESC LIMIT 1";
+	if(!$success = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+
+	echo getDives($db, $POST['diveNum'] - 1, $POST['profileID']);
+}
+
 //Displays on the Planned dives column
 function getDives($db, $diveNum, $profileID) {
-
 	$sql = "SELECT `depth`, `time`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 	$numRows = mysqli_num_rows($result);
-	if($numRows == 0) return "broken";
+	if($numRows == 0) return "";
 	else if($numRows){
 		$diveInfo = "";
 		$checked = false;
