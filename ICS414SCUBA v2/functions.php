@@ -188,14 +188,24 @@ function updateDatabase($db, $profileID){
 	$prevDive = 0;
 	
 	for($i=1;$i<=$num_dives;$i++){
-		//If first row
-		if($i == 1){
+	
 			$data = mysqli_fetch_assoc($result);
 			//Get important values: dive_num, initialpg, depth, time, surface int
 			$diveNum = $data['dive_num'];
 			$depth = $data['depth'];
 			$time = $data['time'];
 			$surfInt = $data['surf_int'];
+		//If dive num is not consecutive, organize divenums.
+		//Ex. $diveNum = 2 $prevDive = 0
+		// $diveNum row 2 needs to change diveNum to 1
+		if($diveNum != ($prevDive +1)){
+			updateDiveNum($db, $diveNum, $prevDive +1);
+			$diveNum = $prevDive +1;
+		}
+		
+		//If first row
+		if($i == 1){
+			
 			//get postDivePG. Time has no residual effect due to this being the first dive
 			$postDivePG = getPostDivePG($db, $depth, $time);
 			$postSurfPG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);
@@ -211,6 +221,11 @@ function updateDatabase($db, $profileID){
 		$prevDive++;
 	}
 	
+}
+//Update dive num if user deleted a dive
+function updateDiveNums($db, $diveNum, $updateNum){
+	$updateNum = "UPDATE `dives` SET `dive_num` = '$updateNum' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+	if(!$result2 = mysqli_query($db, $updateNum)) return "MySQL error: ".mysqli_error($db);
 }
 
 //updates rows greater than the first. used in updateDatabase else statement
