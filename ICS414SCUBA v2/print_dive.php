@@ -17,7 +17,7 @@ function printProfile() {
 
 $(document).ready(
 	function () {
-		drawChart();//put profile id into drawchart
+		drawChart();
 })
 </script>
 </head>
