@@ -198,9 +198,8 @@ function updateDatabase($db, $profileID){
 		//If dive num is not consecutive, organize divenums.
 		//Ex. $diveNum = 2 $prevDive = 0
 		// $diveNum row 2 needs to change diveNum to 1
-		if($diveNum != ($prevDive +1)){
-			updateDiveNum($db, $diveNum, $prevDive +1);
-			$diveNum = $prevDive +1;
+		if($diveNum != $i){
+			updateDiveNums($db, $profileID, $diveNum, $i);
 		}
 		
 		//If first row
@@ -214,7 +213,7 @@ function updateDatabase($db, $profileID){
 			if(!$result2 = mysqli_query($db, $updateSql)) return "MySQL error: ".mysqli_error($db);
 			
 		}else{//Every row
-			$data = mysqli_fetch_assoc($result);
+			//$data = mysqli_fetch_assoc($result);
 			updateOthers($db, $prevDive, $data);
 
 		}
@@ -223,9 +222,10 @@ function updateDatabase($db, $profileID){
 	
 }
 //Update dive num if user deleted a dive
-function updateDiveNums($db, $diveNum, $updateNum){
-	$updateNum = "UPDATE `dives` SET `dive_num` = '$updateNum' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
-	if(!$result2 = mysqli_query($db, $updateNum)) return "MySQL error: ".mysqli_error($db);
+function updateDiveNums($db, $profileID, $diveNum, $updateNum){
+	$updateNumSql = "UPDATE `dives` SET `dive_num` = '$updateNum' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
+	if(!$result2 = mysqli_query($db, $updateNumSql)) return "MySQL error: ".mysqli_error($db);
+	$diveNum = $updateNum;
 }
 
 //updates rows greater than the first. used in updateDatabase else statement
@@ -346,10 +346,13 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 }
 
 function deleteDive($db, $POST) {
-	$sql = "DELETE FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' ORDER BY `dive_num` DESC LIMIT 1";
+	//$sql = "DELETE FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' ORDER BY `dive_num` DESC LIMIT 1";
+	$sql = "DELETE FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' AND `dive_num` = '{$POST['diveNum']}'";
+	if(!$success = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
+	$sql = "DELETE FROM `safety_stops` WHERE `profile_id` = '{$POST['profileID']}' AND `dive_num` = '{$POST['diveNum']}'";
 	if(!$success = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 
-	echo getDives($db, $POST['diveNum'] - 1, $POST['profileID']);
+	//echo getDives($db, $POST['diveNum'] - 1, $POST['profileID']);
 }
 
 //Displays on the Planned dives column
