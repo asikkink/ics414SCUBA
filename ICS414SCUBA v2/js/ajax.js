@@ -33,7 +33,8 @@ $(document).ready(
 
 	// GLOBAL VARIABLE: profile ID
 	profileID = $.getId();
-
+	profileID = 1;
+	drawChart(profileID);
 	
 	//ajax function for depth selection to update bottom time field options
 	$('#depth_select').change(
@@ -123,8 +124,8 @@ $(document).ready(
 					$('#dives').html(data);
 					$('#addDive').text('Save Dive');
 					$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
-
-					drawChart();
+	//=====!!!!!!!!!Draw chart
+					drawChart(profileID);
 					$('input:radio[name=diveRadio]').change(
 					function(){
 						//variable for depth to call getDepth
