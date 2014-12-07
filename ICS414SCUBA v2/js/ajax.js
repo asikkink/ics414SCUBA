@@ -1,3 +1,5 @@
+var profileID;
+
 $(document).ready(
 	function () {
 	
@@ -30,7 +32,7 @@ $(document).ready(
 	});
 
 	// GLOBAL VARIABLE: profile ID
-	var profileID = $.getId();
+	profileID = $.getId();
 
 	
 	//ajax function for depth selection to update bottom time field options

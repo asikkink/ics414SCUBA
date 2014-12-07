@@ -10,7 +10,7 @@ function drawChart(){
 		url : 'ajax_handler.php',
 		data :{
 			action : 'get_dive_data',
-			profileID : profileID;
+			profileID : profileID
 		},
 success: function(results){
 			var myJson = JSON.parse(results);
