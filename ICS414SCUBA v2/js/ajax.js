@@ -173,6 +173,8 @@ $(document).ready(
 								//================================================
 								
 								//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
+								$('#bottom_time_select').prop("disabled", false);
+								$('#surface_int_select').prop("disabled", false);
 								$('#depth_select option:selected').attr("selected",null);
 								$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
 								$('#bottom_time_select option:selected').attr("selected", null);
@@ -210,6 +212,7 @@ $(document).ready(
 				action : "refresh",
 			},
 			success : function (result) {
+				$("input[name='diveRadio'").prop("checked", false);
 				$('#depth_select').html(result);
 				$('#bottom_time_select').empty();
 				$('#bottom_time_select').prop("disabled", true);
