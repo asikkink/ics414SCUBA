@@ -132,7 +132,14 @@ $(document).ready(
 					$('#finish').prop("disabled", false);
 					$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
 
-					var latestDiveNum = $('#diveNumber').val();
+					var latestDiveNum = $("input[name='diveRadio']:last").val();
+
+					if ($('#diveNumber').val() == latestDiveNum) {
+						$('#deleteDive').show();
+					}
+					else {
+						$('#deleteDive').hide();
+					}
 
 	//=====!!!!!!!!!Draw chart
 					drawChart(profileID);
@@ -276,7 +283,7 @@ $(document).ready(
 						$('#finish').prop("disabled", false);
 						$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
 
-						var latestDiveNum = $('#diveNumber').val();
+						var latestDiveNum = $("input[name='diveRadio']:last").val();
 						updateDD(latestDiveNum);
 
 		//=====!!!!!!!!!Draw chart
