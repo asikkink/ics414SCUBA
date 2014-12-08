@@ -279,7 +279,6 @@ $(document).ready(
 				},
 				success : function (data) {
 					// if data is "", then it means there are no more dives
-					drawChart(profileID);
 					if (data != "") {
 						$('#dives').html(data);
 						$('#addDive').text('Save Dive');
@@ -351,6 +350,7 @@ $(document).ready(
 								action : "refresh",
 							},
 							success : function (result) {
+								drawChart(profileID);
 								$('#dives').html(data);
 								$('#depth_select').html(result);
 								$('#bottom_time_select').empty();
