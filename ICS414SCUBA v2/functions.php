@@ -352,7 +352,7 @@ function deleteDive($db, $POST) {
 	$sql = "DELETE FROM `safety_stops` WHERE `profile_id` = '{$POST['profileID']}' AND `dive_num` = '{$POST['diveNum']}'";
 	if(!$success = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
 
-	//echo getDives($db, $POST['diveNum'] - 1, $POST['profileID']);
+	echo getDives($db, $POST['diveNum'] - 1, $POST['profileID']);
 }
 
 //Displays on the Planned dives column

@@ -266,7 +266,6 @@ $(document).ready(
 					diveNum : dn, // need this to get remaining dives after delete
 					profileID : profileID
 				},
-				dataType : "json",
 				success : function (data) {
 					// if data is "", then it means there are no more dives
 
