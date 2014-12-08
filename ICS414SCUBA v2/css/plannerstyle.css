@@ -5,7 +5,6 @@ body {
 }
 
 #container {
-	/*background-color: #ededed;*/
 	background: url('../assets/under_the_sea.png') no-repeat;
 	background-size: 100%;
 	opacity:0.4;

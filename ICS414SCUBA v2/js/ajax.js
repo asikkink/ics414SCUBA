@@ -1,3 +1,4 @@
+// GLOBAL VARIABLE
 var profileID;
 
 $(document).ready(
@@ -17,8 +18,12 @@ $(document).ready(
 				async : false,  //need to be careful with this
 				dataType : "json",
 				success : function (result) {
+					// fill in the drop down options for depths
 					$('#depth_select').html(result['html']);
+
+					// profile ID
 					id = result['pid'];
+
 					$('#bottom_time_select').prop("disabled", true);
 					$('#surface_int_select').prop("disabled", true);
 					$('#safety_time_select').prop("disabled", true);
@@ -35,7 +40,6 @@ $(document).ready(
 	});
 
 	// GLOBAL VARIABLE: profile ID
-	//==========!!!!!!!!!!!!!!
 	profileID = $.getId();
 	//Set pid value
 	$('#pid').val(profileID);
@@ -53,7 +57,6 @@ $(document).ready(
 				depth : value
 			},
 			success : function (result) {
-				//console.log(result);
 				$('#bottom_time_select').html(result);
 				$('#bottom_time_select').prop("disabled", false);
 				validation();
@@ -75,7 +78,6 @@ $(document).ready(
 				depth_selected : depth
 			},
 			success : function (result) {
-				//console.log(result);
 				$('#surface_int_select').html(result);
 				$('#surface_int_select').prop("disabled", false);
 				validation();
@@ -84,7 +86,7 @@ $(document).ready(
 
 	})
 
-
+	// See if all drop downs have selected values, before allowing user to press "Add" or "Save" Dive
 	$('#surface_int_select').change(
 		function() {
 			validation();
@@ -94,40 +96,34 @@ $(document).ready(
 	$('#addDiveForm').on('submit',
 	function (e) {
 		e.preventDefault();
-		//debug mode!
+		//DEBUG MODE
 		var debug = false;
 		if(debug == true){
 			var formValues = "action=debugMode&" + $('#addDiveForm').serialize();
-			//console.log(formValues);
 			$.ajax({
 				type : "POST",
 				url : "testCases.php",
 				data : formValues,
 				success : function (data) {
-					//$('#surface_int_select').html(result);
-					//console.log("hello");
 					console.log(data);
 				},
 				error : function () {
-					//console.log("failed");
+					console.log("failed");
 				}
 			});
 			
 		}
 		else{
-			
 			var formValues = "action=addingDive&" + $('#addDiveForm').serialize() + "&pid=" + profileID;
-			//console.log(formValues);
-			//alert(formValues);
 			$.ajax({
 				type : "POST",
 				url : "ajax_handler.php",
 				data : formValues,
 				success : function (data) {
-					//console.log("hello");
-					//console.log(data);
-					
+					// Show list of dives
 					$('#dives').html(data);
+
+					// Automatically assumes the state of editing the just added dive
 					$('#addDive').text('Save Dive');
 					$('#deleteDive').show();
 					$('#finish').prop("disabled", false);
@@ -142,8 +138,9 @@ $(document).ready(
 						$('#deleteDive').hide();
 					}
 
-	//=====!!!!!!!!!Draw chart
 					drawChart(profileID);
+
+					// User selects a dive to edit
 					$('input:radio[name=diveRadio]').change(
 					function(){
 						//variable for depth to call getDepth
@@ -161,18 +158,16 @@ $(document).ready(
 							dataType: "json",
 							success : function (result) {
 								//will use the ['depth'] 
-								/*Ugly ajax code again
-								*===============================================
+								/**
 								* Reloads the Bottom Time Field so the correct options are displayed
 								*/
 								value = result['depth'];
 								displayBottomTime(value);
-								//Anna added this to reload the surface interval field
+								
 								var time = result['time'];
 								displaySurfInt(value, time);
-								//================================================
 								
-								//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
+								// Updates drop down values based on the dive selected to edit
 								$('#bottom_time_select').prop("disabled", false);
 								$('#surface_int_select').prop("disabled", false);
 								$('#depth_select option:selected').attr("selected",null);
@@ -183,6 +178,7 @@ $(document).ready(
 								$('#surface_int_select option[value=' + result['surf_int'] + ']').attr("selected", "selected");
 								$('#diveNumber').val(result['dive_num']);
 
+								// Only show delete dive if it is the last dive
 								if ($('#diveNumber').val() == latestDiveNum) {
 									$('#deleteDive').show();
 								}
@@ -203,6 +199,7 @@ $(document).ready(
 
 	})
 	
+	// User wants to add new dive
 	$('#newDive').click(
 	function () {
 		$.ajax({
@@ -212,6 +209,7 @@ $(document).ready(
 				action : "refresh",
 			},
 			success : function (result) {
+				// Resets all related elements to initial state
 				$("input[name='diveRadio'").prop("checked", false);
 				$('#depth_select').html(result);
 				$('#bottom_time_select').empty();
@@ -230,6 +228,7 @@ $(document).ready(
 		});
 	})
 
+	// Default Safety stop option
 	$("input[name='defSS']").change(
 		function() {
 			if (this.checked) {
@@ -263,7 +262,7 @@ $(document).ready(
 			}
 	})
 
-
+	// Deleting a dive
 	$('#delete').click(
 		function(){
 			$('#deleteModal').hide();
@@ -287,9 +286,8 @@ $(document).ready(
 						$('#diveNumber').val($('input:radio[name=diveRadio]:checked').val());
 
 						var latestDiveNum = $("input[name='diveRadio']:last").val();
-						updateDD(latestDiveNum);
+						updateDD(latestDiveNum); // Updates the drop down values
 
-		//=====!!!!!!!!!Draw chart
 						drawChart(profileID);
 						$('input:radio[name=diveRadio]').change(
 							function(){
@@ -308,18 +306,15 @@ $(document).ready(
 									dataType: "json",
 									success : function (result) {
 										//will use the ['depth'] 
-										/*Ugly ajax code again
-										*===============================================
+										/**
 										* Reloads the Bottom Time Field so the correct options are displayed
 										*/
 										value = result['depth'];
 										displayBottomTime(value);
-										//Anna added this to reload the surface interval field
+										
 										var time = result['time'];
 										displaySurfInt(value, time);
-										//================================================
 										
-										//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
 										$('#bottom_time_select').prop("disabled", false);
 										$('#surface_int_select').prop("disabled", false);
 										$('#depth_select option:selected').attr("selected",null);
@@ -343,6 +338,7 @@ $(document).ready(
 						})
 					}
 					else {
+						// there are no more dives, so program assumes initial state where user has to add a dive
 						$.ajax({
 							type : 'POST',
 							url : 'ajax_handler.php',
@@ -370,7 +366,8 @@ $(document).ready(
 				}
 			});
 	})
-
+	
+	// Used for when a user deletes a dive, so must update drop down options based on the previous dive (which becomes the new last dive)
 	function updateDD(diveNum) {
 		$.ajax({
 			type : 'POST',
@@ -397,9 +394,7 @@ $(document).ready(
 	
 })
 
-
-//Organized code... for that long nested ajax code
-//This one works
+// Organized function for displaying bottom time.
 function displayBottomTime(depth){
 	$.ajax({
 		type : 'POST',
@@ -410,14 +405,13 @@ function displayBottomTime(depth){
 		},
 		async: false,
 		success : function (result) {
-			//console.log(result);
 			$('#bottom_time_select').html(result);
 
 		}
 	});
 }
 
-//similar to displayBottomTime, but for Surface Interval
+// Similar to displayBottomTime, but for Surface Interval
 function displaySurfInt(depth, bottom_time){
 $.ajax({
 		type : 'POST',
@@ -434,6 +428,7 @@ $.ajax({
 	});
 }
 
+// Makes sure that all three necessary drop downs have selected values before user can save/edit dive
 function validation() {
 	if ($('#depth_select').val() == null || $('#bottom_time_select').val() == null || $('#surface_int_select').val() == null) {
 		$('#addDive').prop("disabled", true);

@@ -1,9 +1,7 @@
 
 google.load("visualization", "1", {packages:["corechart"]});
-//google.setOnLoadCallback(drawChart);
 
 //Retrieve dive information from dive chart
-//Helpful source: http://stackoverflow.com/questions/10871729/put-labels-on-top-of-inside-bar-in-google-interactive-bar-chart/12918002#12918002
 function drawChart(profile_id){
 	$.ajax({
 		type : 'POST',
@@ -81,11 +79,11 @@ function drawChart(profile_id){
 					barchart.draw(data, options);
 					
 				}
+			}
+			else {
+				barchart.clearChart();
+				$('#chart_div').empty();
+			}
 		}
-		else {
-			barchart.clearChart();
-			$('#chart_div').empty();
-		}
-	}
 	});
 }

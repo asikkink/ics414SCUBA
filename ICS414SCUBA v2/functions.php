@@ -1,8 +1,9 @@
 <?php
 //File that includes all of the functions for our dive planner app!
 
-
-//set the initial values for the max depth field
+/**
+* Set the initial values for the max depth field and return the next available profile ID.
+*/
 function initialize($db,$POST){
 	if(isset($POST['init'])){
 		ob_start();
@@ -18,7 +19,7 @@ function initialize($db,$POST){
 		}
 		//if there is no mysql error, see if any rows were returned from the query
 		else if(mysqli_num_rows($result) == 0){
-			// no previous profiles ids
+			// base case: no previous profiles ids
 			$pid = 1;
 		}
 		else {
@@ -27,6 +28,7 @@ function initialize($db,$POST){
 			$pid = $profid['profile_id'] + 1;
 		}
 
+		// return the depth options and the new profile ID
 		$data['html'] = $depth_html;
 		$data['pid'] = $pid;
 		echo json_encode($data, true);
@@ -35,6 +37,7 @@ function initialize($db,$POST){
 	} else echo "No rows returned by database.";
 }
 
+// Refreshes the drop down list of depths
 function refreshVals($db) {
 	//set sql statement
 	$sql = "SELECT DISTINCT `depth` from `bottom_time` ORDER BY `depth` ASC";
@@ -82,6 +85,7 @@ function selectDepth($db, $POST){
 		//send error
 	}else echo "No rows returned by database.";
 }
+
 /**If a specific bottom time has been selected, retrieve the surface intervals for that depth
 *  Field affected: Surface Interval (minutes)
 */
@@ -108,10 +112,10 @@ function selectBottomTime($db, $POST){
 		//send error
 	}else echo "No rows returned by database.";
 }
-/**When submit button is pressed, manage add dive to dive table
-*  Test: echo's dive row back to client console
-*  Everything goes on here for testing
-*  VICTOR: Story time!
+
+/**
+* When submit button is pressed, manage add dive to dive table
+* Test: echo's dive row back to client console
 */
 function addDive($db, $POST){
 	//references
@@ -121,6 +125,8 @@ function addDive($db, $POST){
 	$surfInt = $POST['surface_int_select'];
 	$diveNum = $POST['diveNumber'];
 	$safetyDepth = $POST['safety_depth_select'];
+
+	// If the "None" option is not selected
 	if ($safetyDepth != 0) {
 		$safetyTime = $POST['safety_time_select'];
 	}
@@ -152,8 +158,7 @@ function addDive($db, $POST){
 		$postSurfacePG = getPostSurfaceIntPG($db, $postDivePG, $surfInt);	
 		
 		//insert values into table
-		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', 
-		'$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
+		$sql = "INSERT INTO `dives` VALUES ('$profileID', '$diveNum', '$initialPG', '$depth', '$time', '$postDivePG', '$surfInt', '$postSurfacePG', '$residualTime') ";
 		
 		//Wait... what is the point of this? Oh wells, yolo!
 		storeStops($db, $profileID, $diveNum, $safetyDepth, $safetyTime);
@@ -167,13 +172,13 @@ function addDive($db, $POST){
 	//Adds or updates dive
 	mysqli_query($db, $sql);
 	
-	// NEED TO CALL A FUNCTION TO UPDATE PRESSURE GROUPS HERE
+	//Case: User edits a dive -> Must update pressure groups following this dive
 	updateDatabase($db, $profileID);
 
 	$diveInfo = getDives($db, $diveNum, $profileID);
-
 	echo $diveInfo;
 }
+
 /** Update Everything!
 ============================================ Start
 * What: goes through dives in database and updates pressure groups due to modified depths, times, and surface intervals
@@ -221,15 +226,20 @@ function updateDatabase($db, $profileID){
 	}
 	
 }
-//Update dive num if user deleted a dive
+
+/**
+* Update dive num if user deleted a dive.
+*/
 function updateDiveNums($db, $profileID, $diveNum, $updateNum){
 	$updateNumSql = "UPDATE `dives` SET `dive_num` = '$updateNum' WHERE `profile_id` = '$profileID' AND `dive_num` = '$diveNum'";
 	if(!$result2 = mysqli_query($db, $updateNumSql)) return "MySQL error: ".mysqli_error($db);
 	$diveNum = $updateNum;
 }
 
-//updates rows greater than the first. used in updateDatabase else statement
-//requires $prevRow to get previous postSurfIntPG to put into current initialPG 
+/**
+* Updates rows greater than the first. used in updateDatabase else statement. Requires 
+* $prevRow to get previous postSurfIntPG to put into current initialPG.
+*/
 function updateOthers($db, $prevRow, $data){
 	$profileID = $data['profile_id'];
 	$diveNum = $data['dive_num'];
@@ -254,6 +264,7 @@ function updateOthers($db, $prevRow, $data){
 	if(!$result2 = mysqli_query($db, $updateSql)) return "MySQL error: ".mysqli_error($db);
 	
 }
+
 /**============================================================================END
 */
 
@@ -293,6 +304,7 @@ function getInitialPG($db, $profileID, $prevDiveNum){
 	}
 	return $init_pressure_group;	
 }
+
 /**Get the post dive pressure group
 *  The $time will be the Total time 
 *  
@@ -328,9 +340,8 @@ function getResidualTime($db, $initialPG, $depth){
 	}
 }
 
-
-/**Get the post surface interval pressure group
-*
+/**
+* Get the post surface interval pressure group.
 */
 function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
@@ -345,6 +356,9 @@ function getPostSurfaceIntPG($db, $postDivePG, $surfInt) {
 	
 }
 
+/**
+* Deletes a dive from the database.
+*/
 function deleteDive($db, $POST) {
 	//$sql = "DELETE FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' ORDER BY `dive_num` DESC LIMIT 1";
 	$sql = "DELETE FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' AND `dive_num` = '{$POST['diveNum']}'";
@@ -355,7 +369,9 @@ function deleteDive($db, $POST) {
 	echo getDives($db, $POST['diveNum'] - 1, $POST['profileID']);
 }
 
-//Displays on the Planned dives column
+/**
+* Returns the list of dives to display in the "Planned Dives" column.
+*/
 function getDives($db, $diveNum, $profileID) {
 	$sql = "SELECT `depth`, `time`, `dive_num` FROM `dives` WHERE `profile_id` = '$profileID' ORDER BY `dive_num` ASC";
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
@@ -377,9 +393,10 @@ function getDives($db, $diveNum, $profileID) {
 	}
 }
 
+/**
+* Shows the information of the dive selected to edit.
+*/
 function showDive($db, $POST) {
-	//$profileID = 1;
-	
 	$sql = "SELECT `depth`, `time`, `surf_int`, `dive_num` FROM `dives` WHERE `profile_id` = '{$POST['profileID']}' AND `dive_num` = '{$POST['diveNum']}'";
 
 	if(!$result = mysqli_query($db, $sql)) return "MySQL error: ".mysqli_error($db);
@@ -391,10 +408,11 @@ function showDive($db, $POST) {
 		echo json_encode($test);
 	}
 	closeDB($db);
-
 }
 
-//Get dive data
+/**
+* Function used to retrieve dives to display on graph.
+*/
 function getDiveData($db, $POST){
 	$profileID = $POST['profileID'];
 	
@@ -413,11 +431,16 @@ function getDiveData($db, $POST){
 
 }
 
-//Simple close db connection function
+/**
+* Simple close db connection function
+*/
 function closeDB($db){
 	mysqli_close($db);
 }
 
+/**
+* Retrieves the residual time of the previous dive.
+*/
 function getPrevDiveResidual($db, $profileID, $prevDiveNum){
 	$sql = "SELECT `residual_time` FROM `dives` WHERE `profile_id` = '$profileID' AND `dive_num` = '$prevDiveNum'";
 	//error_log("getPrev: $sql");
@@ -433,7 +456,10 @@ function getPrevDiveResidual($db, $profileID, $prevDiveNum){
 	}
 	return $residual_time;	
 }
-//Store safety stops
+
+/**
+* Stores safety stops in the database. (diveNum is the common key between the 'dives' and 'safety_stops' tables)
+*/
 function storeStops($db, $profileID, $diveNum, $ssDepth, $ssTime){
 	
 	$sql = "INSERT INTO `safety_stops` VALUES ('$profileID', '$diveNum', $ssDepth, $ssTime)";
