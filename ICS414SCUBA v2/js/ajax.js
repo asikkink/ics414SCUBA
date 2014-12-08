@@ -56,6 +56,7 @@ $(document).ready(
 				//console.log(result);
 				$('#bottom_time_select').html(result);
 				$('#bottom_time_select').prop("disabled", false);
+				validation();
 			}
 		});
 	})
@@ -65,7 +66,6 @@ $(document).ready(
 	function () {
 		value = $('#bottom_time_select').val();
 		depth = $('#depth_select').val();
-		//alert(value);
 		$.ajax({
 			type : 'POST',
 			url : 'ajax_handler.php',
@@ -78,6 +78,7 @@ $(document).ready(
 				//console.log(result);
 				$('#surface_int_select').html(result);
 				$('#surface_int_select').prop("disabled", false);
+				validation();
 			}
 		});
 
@@ -86,7 +87,7 @@ $(document).ready(
 
 	$('#surface_int_select').change(
 		function() {
-			$('#addDive').prop("disabled", false);
+			validation();
 	})
 
 	//ajax function for AddDive selection to update graph and final calculations
@@ -275,7 +276,7 @@ $(document).ready(
 				},
 				success : function (data) {
 					// if data is "", then it means there are no more dives
-
+					drawChart(profileID);
 					if (data != "") {
 						$('#dives').html(data);
 						$('#addDive').text('Save Dive');
@@ -317,6 +318,8 @@ $(document).ready(
 										//================================================
 										
 										//alert(result['depth'] + " " + result['time'] + " " + result['surf_int'] + " " + result['dive_num']);
+										$('#bottom_time_select').prop("disabled", false);
+										$('#surface_int_select').prop("disabled", false);
 										$('#depth_select option:selected').attr("selected",null);
 										$('#depth_select option[value=' + result['depth'] + ']').attr("selected", "selected");
 										$('#bottom_time_select option:selected').attr("selected", null);
@@ -426,4 +429,13 @@ $.ajax({
 			$('#surface_int_select').html(result);
 		}
 	});
+}
+
+function validation() {
+	if ($('#depth_select').val() == null || $('#bottom_time_select').val() == null || $('#surface_int_select').val() == null) {
+		$('#addDive').prop("disabled", true);
+	}
+	else {
+		$('#addDive').prop("disabled", false);
+	}
 }
