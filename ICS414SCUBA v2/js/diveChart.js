@@ -69,19 +69,22 @@ function drawChart(profile_id){
 							
 							},
 						tooltip: {isHtml: true},
-						//colors: ['blue', 'orange'],
-						backgroundColor: '#E4E4E4',
+						colors: ['white', 'red'],
+						backgroundColor: {
+							fill: 'transparent'
+						},
 						chartArea: {
-							backgroundColor: 'white'
+							backgroundColor: 'none'
 						}
 					};
 
 					barchart.draw(data, options);
-
+					
 				}
 		}
 		else {
 			barchart.clearChart();
+			$('#chart_div').empty();
 		}
 	}
 	});
